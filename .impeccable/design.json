@@ -1,0 +1,351 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-24T10:04:21+00:00",
+  "title": "Design System: FIARIL Orthopedics",
+  "extensions": {
+    "colorMeta": {
+      "orbital-navy": {
+        "role": "primary",
+        "displayName": "Orbital Navy",
+        "canonical": "#07253f",
+        "oklch": "oklch(25.8% 0.060 248.7)",
+        "tonalRamp": [
+          "#050c13",
+          "#192634",
+          "#304458",
+          "#49647f",
+          "#6986a2",
+          "#91a8bf",
+          "#bacbdd",
+          "#e5f0fc"
+        ]
+      },
+      "signal-red": {
+        "role": "secondary",
+        "displayName": "Signal Red",
+        "canonical": "#b1282f",
+        "oklch": "oklch(50.1% 0.173 23.7)",
+        "tonalRamp": [
+          "#1e0102",
+          "#480b0e",
+          "#761c1f",
+          "#a83033",
+          "#cf5553",
+          "#e8847f",
+          "#ffb2ad",
+          "#ffe0dc"
+        ]
+      },
+      "energy-yellow": {
+        "role": "tertiary",
+        "displayName": "Energy Yellow",
+        "canonical": "#f3b234",
+        "oklch": "oklch(80.4% 0.152 79.1)",
+        "tonalRamp": [
+          "#160700",
+          "#391e00",
+          "#603800",
+          "#8a5400",
+          "#ae7600",
+          "#c99d50",
+          "#e5c48e",
+          "#ffebc9"
+        ]
+      },
+      "titanium-grey": {
+        "role": "neutral",
+        "displayName": "Titanium Grey",
+        "canonical": "#72767f",
+        "oklch": "oklch(56.5% 0.015 266.6)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232529",
+          "#3f4248",
+          "#5e6169",
+          "#7f828b",
+          "#a2a5ac",
+          "#c7c9ce",
+          "#edeef2"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#222222",
+        "oklch": "oklch(25.2% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "mineral": {
+        "role": "neutral",
+        "displayName": "Mineral",
+        "canonical": "#f7f7f7",
+        "oklch": "oklch(97.6% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#5b5f67",
+        "oklch": "oklch(48.5% 0.014 264.4)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232529",
+          "#3f4247",
+          "#5e6169",
+          "#7f828a",
+          "#a2a5ab",
+          "#c7c9ce",
+          "#edeef2"
+        ]
+      },
+      "night-muted": {
+        "role": "neutral",
+        "displayName": "Night Muted",
+        "canonical": "#afb8c0",
+        "oklch": "oklch(77.8% 0.015 244.8)",
+        "tonalRamp": [
+          "#090b0d",
+          "#222629",
+          "#3d4347",
+          "#5b6269",
+          "#7c838a",
+          "#a0a6ab",
+          "#c5cace",
+          "#eceff2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Una sola frase por página: el statement del hero."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "h1 de páginas interiores."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "h2/h3 de capítulo y bloque."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto de lectura, 62ch."
+      },
+      "label": {
+        "displayName": "Data Label",
+        "purpose": "Solo datos técnicos reales: referencias, códigos, medidas."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 24px 48px -24px color-mix(in srgb, #07253f 35%, transparent)",
+        "purpose": "Menús, hoja móvil y diálogos. Nada en reposo lleva sombra."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Entrar y responder; por defecto."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Elementos que se desplazan en pantalla."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Hojas y menú móvil."
+      },
+      {
+        "name": "dur-press",
+        "value": "120ms",
+        "purpose": ":active"
+      },
+      {
+        "name": "dur-hover",
+        "value": "160ms",
+        "purpose": "Color/opacidad en hover."
+      },
+      {
+        "name": "dur-ui",
+        "value": "200ms",
+        "purpose": "Desplegables, popovers."
+      },
+      {
+        "name": "dur-panel",
+        "value": "320ms",
+        "purpose": "Menús, hojas."
+      },
+      {
+        "name": "dur-reveal",
+        "value": "600ms",
+        "purpose": "Revelado narrativo único; nunca en controles."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "40em"
+      },
+      {
+        "name": "desktop",
+        "value": "64em"
+      },
+      {
+        "name": "wide",
+        "value": "90em"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal: Solicitar cotización.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Solicitar cotización</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;min-height:44px;padding:.85em 1.4em;font:500 .875rem/1 'Manrope Variable',system-ui,sans-serif;letter-spacing:.04em;border-radius:999px;border:1px solid #07253f;cursor:pointer;transition:background-color 160ms cubic-bezier(.23,1,.32,1),color 160ms cubic-bezier(.23,1,.32,1),transform 120ms cubic-bezier(.23,1,.32,1)}.ds-btn:active{transform:scale(.97)}.ds-btn:focus-visible{outline:2px solid #b1282f;outline-offset:3px}.ds-btn-primary{background:#07253f;color:#fff}@media (hover:hover) and (pointer:fine){.ds-btn-primary:hover{background:transparent;color:#07253f}}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Acción secundaria: Explorar especialidades.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Explorar especialidades</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;min-height:44px;padding:.85em 1.4em;font:500 .875rem/1 'Manrope Variable',system-ui,sans-serif;letter-spacing:.04em;border-radius:999px;border:1px solid #07253f;cursor:pointer;transition:background-color 160ms cubic-bezier(.23,1,.32,1),color 160ms cubic-bezier(.23,1,.32,1),transform 120ms cubic-bezier(.23,1,.32,1)}.ds-btn:active{transform:scale(.97)}.ds-btn:focus-visible{outline:2px solid #b1282f;outline-offset:3px}.ds-btn-ghost{background:transparent;color:#07253f}@media (hover:hover) and (pointer:fine){.ds-btn-ghost:hover{background:#07253f;color:#fff}}"
+    },
+    {
+      "name": "Inverse Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary-inverse",
+      "description": "Acción principal sobre superficie navy; el foco pasa a amarillo.",
+      "html": "<div class=\"ds-inv\"><button class=\"ds-btn ds-btn-inv\">Solicitar cotización</button></div>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;min-height:44px;padding:.85em 1.4em;font:500 .875rem/1 'Manrope Variable',system-ui,sans-serif;letter-spacing:.04em;border-radius:999px;border:1px solid #07253f;cursor:pointer;transition:background-color 160ms cubic-bezier(.23,1,.32,1),color 160ms cubic-bezier(.23,1,.32,1),transform 120ms cubic-bezier(.23,1,.32,1)}.ds-btn:active{transform:scale(.97)}.ds-btn:focus-visible{outline:2px solid #b1282f;outline-offset:3px}.ds-inv{background:#07253f;padding:24px}.ds-btn-inv{background:#f7f7f7;color:#07253f;border-color:#f7f7f7}.ds-btn-inv:focus-visible{outline-color:#f3b234}"
+    },
+    {
+      "name": "Data Label",
+      "kind": "chip",
+      "refersTo": "label",
+      "description": "Dato técnico real (referencia, medida). No es un eyebrow.",
+      "html": "<span class=\"ds-label\">REF 4.5 MM</span>",
+      "css": ".ds-label{font:600 .875rem/1.4 'Manrope Variable',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;font-variant-numeric:tabular-nums;color:#5b5f67}"
+    },
+    {
+      "name": "Pending Marker",
+      "kind": "custom",
+      "refersTo": "pending",
+      "description": "Contenido provisional pendiente de FIARIL.",
+      "html": "<p class=\"ds-pending\">Teléfono de contacto pendiente de confirmar</p>",
+      "css": ".ds-pending{outline:1px dashed #b1282f;outline-offset:4px;font:400 1rem/1.6 'Manrope Variable',system-ui,sans-serif;color:#07253f;margin:8px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Precisión en movimiento",
+    "overview": "FIARIL se construye con puntos, no se decora con ellos. Raster Anatomy es el mundo base (mineral, tinta navy, halftone); el Plano técnico es el vocabulario (cotas, cortes, referencias reales); el Quirófano nocturno es un momento puntual sobre navy. La metáfora es la resolución: lo disperso converge en estructura, y el contraste entre quietud y vida es el sistema.",
+    "keyCharacteristics": [
+      "Superficie mineral, tinta navy, rojo como señal, amarillo como energía.",
+      "Manrope en todos los niveles; la voz tipográfica es el display ligero a gran tamaño.",
+      "Plano por defecto: líneas finas en lugar de sombras.",
+      "Un solo campo generativo vivo en pantalla a la vez.",
+      "Todo movimiento tiene un equivalente estático."
+    ],
+    "rules": [
+      {
+        "name": "The Surface Swap Rule",
+        "body": "El acento depende de la superficie: rojo sobre mineral, amarillo sobre navy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Signal Rule",
+        "body": "Rojo significa que algo está ocurriendo; no es decoración.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Inks Rule",
+        "body": "Rojo y amarillo no conviven en un mismo componente de interfaz.",
+        "section": "colors"
+      },
+      {
+        "name": "The Data Label Rule",
+        "body": "Las mayúsculas espaciadas identifican datos, no secciones.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Statement Rule",
+        "body": "El display a peso 300 aparece una sola vez por página.",
+        "section": "typography"
+      },
+      {
+        "name": "The Logo Is Not Type Rule",
+        "body": "El wordmark nunca se compone en tipografía.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Nada en reposo lleva sombra.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Live Field Rule",
+        "body": "Como máximo un canvas animado visible a la vez.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** usar `--color-accent` y `--color-focus` en lugar de rojo o amarillo directos, para que la superficie decida (The Surface Swap Rule).",
+      "**Do** reservar `.display` para una sola frase por página.",
+      "**Do** apoyar todo texto sobre un plano sólido de la superficie.",
+      "**Do** dar a cada animación autónoma de más de 5 s un control de pausa y un estado estático.",
+      "**Do** marcar con `.pending` todo dato no confirmado por FIARIL.",
+      "**Do** mostrar el logo solo sobre superficies claras y a una altura de contenido de al menos unos 136 px; por debajo, el isotipo."
+    ],
+    "donts": [
+      "**Don't** usar amarillo como texto o borde funcional sobre superficies claras (1.75:1).",
+      "**Don't** usar rojo como texto sobre navy (2.39:1).",
+      "**Don't** poner sombras en tarjetas en reposo ni inventar valores de z-index fuera de la escala.",
+      "**Don't** usar mayúsculas espaciadas como eyebrow decorativo ni numerar lo que no es una secuencia.",
+      "**Don't** tener más de un campo generativo animado visible a la vez.",
+      "**Don't** redibujar, vectorizar, recolorear ni invertir el logo.",
+      "**Don't** usar la paleta medtech genérica de azules fríos ni gradientes decorativos.",
+      "**Don't** usar `transition: all` ni animar propiedades de layout."
+    ]
+  }
+}

@@ -1,25 +1,39 @@
 @import '@fontsource-variable/manrope';
 
-/* ---------- Brand primitives (sampled from logo/logo-fiaril.jpeg, see docs/02) ---------- */
+/* =====================================================================
+   FIARIL design tokens. Rationale and usage rules: DESIGN.md.
+   Layers: 1 primitives → 2 semantic (per surface) → 3 base → 4 utilities.
+   Components consume semantic tokens only; never primitives or raw hex.
+   Breakpoints (custom properties can't drive @media; use these literals):
+     40em (640px) tablet · 64em (1024px) desktop · 90em (1440px) wide
+   ===================================================================== */
+
 :root {
+  /* ---------- 1. Primitives: the six brand colours + white ---------- */
   --orbital-navy: #07253f;
   --signal-red: #b1282f;
   --energy-yellow: #f3b234;
   --titanium-grey: #72767f;
   --graphite: #222222;
-  --mineral: #f7f7f7; /* = logo background, so the JPEG logo sits seamlessly */
+  --mineral: #f7f7f7;
   --white: #ffffff;
 
-  /* ---------- Semantic tokens ---------- */
-  --color-primary: var(--orbital-navy);
-  --color-secondary: var(--titanium-grey);
-  --color-accent: var(--signal-red);
-  --color-energy: var(--energy-yellow);
+  /* ---------- 2. Semantic colour: light surface (default) ---------- */
   --color-surface: var(--mineral);
   --color-surface-raised: var(--white);
-  --color-text: var(--orbital-navy);
-  --color-muted: #5b5f67; /* titanium darkened to 6.0:1 on mineral for body-size text */
-  --color-border: color-mix(in srgb, var(--orbital-navy) 14%, transparent);
+  --color-text: var(--orbital-navy);               /* 14.6:1 on mineral */
+  --color-text-muted: #5b5f67;                     /* 6.0:1, titanium darkened for body-size text */
+  --color-border: color-mix(in srgb, var(--orbital-navy) 14%, transparent); /* decorative hairline */
+  --color-border-control: var(--titanium-grey);    /* 4.25:1, form controls (WCAG 1.4.11 ≥ 3:1) */
+  --color-primary: var(--orbital-navy);            /* filled actions */
+  --color-on-primary: var(--white);
+  --color-accent: var(--signal-red);               /* 6.1:1, activity / state / focus on light */
+  --color-focus: var(--signal-red);
+  --color-energy: var(--energy-yellow);            /* graphic only on light (1.75:1): never text */
+  --color-secondary: var(--titanium-grey);         /* large metadata (≥ 24px or 18.66px bold) */
+
+  /* legacy alias, kept so existing pages don't change */
+  --color-muted: var(--color-text-muted);
 
   /* ---------- Type ---------- */
   --font-sans: 'Manrope Variable', system-ui, sans-serif;
@@ -29,23 +43,95 @@
   --step-2: clamp(1.6rem, 1.4rem + 1vw, 2.25rem);
   --step-3: clamp(2.1rem, 1.7rem + 2vw, 3.5rem);
   --step-4: clamp(2.6rem, 1.9rem + 3.5vw, 5.25rem);
+  --step-5: clamp(3rem, 1.6rem + 6vw, 7.5rem);     /* display: hero statement only */
+
+  --weight-display: 300;
+  --weight-body: 400;
+  --weight-ui: 500;
+  --weight-heading: 600;
+  --weight-data: 600;
+
+  --leading-display: 0.98;
+  --leading-heading: 1.08;
+  --leading-body: 1.6;
+
+  --tracking-display: -0.045em;
+  --tracking-heading: -0.02em;
+  --tracking-ui: 0.04em;
+  --tracking-data: 0.12em;
+
   --measure: 62ch;
 
   /* ---------- Space & grid ---------- */
+  --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-s: 1rem;
   --space-m: 1.5rem;
   --space-l: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
   --space-xl: clamp(4rem, 3rem + 5vw, 8rem);
+  --space-2xl: clamp(6rem, 4rem + 8vw, 12rem);     /* chapter breaks between narrative blocks */
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
   --max-width: 90rem;
-  --radius: 2px;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --grid-columns: 4;
+  --grid-gap: var(--gutter);
+
+  /* ---------- Shape ---------- */
+  --radius: 2px;              /* technical: inputs, panels, tags */
+  --radius-pill: 999px;       /* buttons only */
+  --border-width: 1px;
+  --focus-width: 2px;
+  --focus-offset: 3px;
+
+  /* ---------- Elevation: flat by default, one shadow for overlays ---------- */
+  --shadow-overlay: 0 24px 48px -24px color-mix(in srgb, var(--orbital-navy) 35%, transparent);
+
+  /* ---------- Layers ---------- */
+  --z-canvas: 0;
+  --z-content: 1;
+  --z-header: 100;
+  --z-overlay: 200;
+  --z-toast: 300;
+  --z-skip: 400;
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* enter, respond: default */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* something moving on screen */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* sheets, mobile menu */
+  --dur-press: 120ms;     /* :active feedback */
+  --dur-hover: 160ms;     /* colour / opacity on hover */
+  --dur-ui: 200ms;        /* dropdowns, small popovers */
+  --dur-panel: 320ms;     /* menus, sheets, drawers */
+  --dur-reveal: 600ms;    /* one-off narrative reveals, never on UI controls */
+  --press-scale: 0.97;
 }
+
+@media (min-width: 40em) { :root { --grid-columns: 6; } }
+@media (min-width: 64em) { :root { --grid-columns: 12; } }
+
+/* ---------- Inverse surface ("quirófano nocturno" moments) ----------
+   Re-maps the semantic layer so any component placed inside adapts.
+   Accent swaps to yellow: red on navy is 2.4:1, yellow on navy 8.3:1. */
+.surface-inverse {
+  --color-surface: var(--orbital-navy);
+  --color-surface-raised: color-mix(in srgb, var(--mineral) 8%, var(--orbital-navy));
+  --color-text: var(--mineral);                                               /* 14.6:1 */
+  --color-text-muted: color-mix(in srgb, var(--mineral) 70%, var(--orbital-navy)); /* #afb8c0, 7.8:1 */
+  --color-border: color-mix(in srgb, var(--mineral) 18%, transparent);
+  --color-border-control: color-mix(in srgb, var(--mineral) 60%, var(--orbital-navy)); /* 6.1:1 */
+  --color-primary: var(--mineral);
+  --color-on-primary: var(--orbital-navy);
+  --color-accent: var(--energy-yellow);
+  --color-focus: var(--energy-yellow);
+  --color-secondary: var(--color-text-muted);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* =========================== 3. Base =========================== */
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; color-scheme: light; }
 
 body {
   margin: 0;
@@ -53,13 +139,13 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--step-0);
-  font-weight: 400;
-  line-height: 1.6;
+  font-weight: var(--weight-body);
+  line-height: var(--leading-body);
   font-feature-settings: 'ss01';
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 { font-weight: 600; line-height: 1.08; letter-spacing: -0.02em; margin: 0 0 var(--space-s); text-wrap: balance; }
+h1, h2, h3, h4 { font-weight: var(--weight-heading); line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); margin: 0 0 var(--space-s); text-wrap: balance; }
 h1 { font-size: var(--step-4); letter-spacing: -0.035em; }
 h2 { font-size: var(--step-3); }
 h3 { font-size: var(--step-2); line-height: 1.15; }
@@ -68,16 +154,26 @@ p { margin: 0 0 var(--space-s); max-width: var(--measure); text-wrap: pretty; }
 a { color: inherit; text-underline-offset: 0.2em; }
 img, canvas { display: block; max-width: 100%; }
 
-:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset); }
 
-/* Technical label: metadata, codes, section indices. Replaces a mono family (see DECISIONS D-004). */
+/* ========================= 4. Utilities ========================= */
+
+/* Display statement: light weight at large size is the brand's typographic voice. */
+.display {
+  font-size: var(--step-5);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+/* Technical data label: codes, references, measurements. NOT an eyebrow above headings (DESIGN.md). */
 .label {
   font-size: var(--step--1);
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: var(--weight-data);
+  letter-spacing: var(--tracking-data);
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .wrap { width: min(100% - 2 * var(--gutter), var(--max-width)); margin-inline: auto; }
@@ -85,15 +181,19 @@ img, canvas { display: block; max-width: 100%; }
 .btn {
   display: inline-flex; align-items: center; gap: 0.6em;
   padding: 0.85em 1.4em; min-height: 44px;
-  font: 500 var(--step--1) / 1 var(--font-sans); letter-spacing: 0.04em;
-  text-decoration: none; border-radius: 999px;
-  background: var(--color-primary); color: var(--white);
-  border: 1px solid var(--color-primary);
-  transition: background 0.3s var(--ease-out), color 0.3s var(--ease-out);
+  font: var(--weight-ui) var(--step--1) / 1 var(--font-sans); letter-spacing: var(--tracking-ui);
+  text-decoration: none; border-radius: var(--radius-pill);
+  background: var(--color-primary); color: var(--color-on-primary);
+  border: var(--border-width) solid var(--color-primary);
+  touch-action: manipulation;
+  transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
 }
-.btn:hover { background: transparent; color: var(--color-primary); }
+.btn:active { transform: scale(var(--press-scale)); }
 .btn--ghost { background: transparent; color: var(--color-primary); }
-.btn--ghost:hover { background: var(--color-primary); color: var(--white); }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { background: transparent; color: var(--color-primary); }
+  .btn--ghost:hover { background: var(--color-primary); color: var(--color-on-primary); }
+}
 
 /* Placeholder content awaiting confirmation from FIARIL. Visible on purpose. */
 .pending { outline: 1px dashed var(--signal-red); outline-offset: 4px; }

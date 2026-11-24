@@ -1,5 +1,7 @@
 # 02 — Brand System
 
+> **Sustituido por `DESIGN.md` (2026-11-24).** Se conserva como historial; ante cualquier discrepancia manda `DESIGN.md`.
+
 Fuente de verdad: `src/styles/global.css`. Este documento explica el porqué; no duplica valores salvo la paleta.
 
 ## Paleta
