@@ -1,27 +1,36 @@
 ---
-// Home. Every statement comes from confirmed facts in PRODUCT.md; nothing marked [P] is published.
+// Home, Creative Direction V2 (docs/14): light -> operating room -> light.
+// Every statement comes from confirmed facts in PRODUCT.md. Images are labelled: renders are
+// conceptual visualisations, radiographs are illustrative CC0 images (docs/06).
 import Base from '../layouts/Base.astro';
+import { Image, Picture } from 'astro:assets';
+import hipRender from '../assets/renders/hip.png';
+import instrumentRender from '../assets/renders/instrument.png';
+import consumablesRender from '../assets/renders/consumables.png';
+import kneeXray from '../assets/imaging/knee-lateral.jpg';
+import hipXray from '../assets/imaging/hip-ap.jpg';
 
 // Online reception stays OFF until FIARIL confirms who receives requests and publishes a valid
-// privacy notice (LFPDPPP). While off, the form is not registered with Netlify Forms (no
-// data-netlify) and submitting sends nothing. To enable: set true, deploy, enable form detection.
+// privacy notice (LFPDPPP). While off, no form is registered with Netlify Forms, nothing is sent and
+// CVs never leave the browser. To enable: set true, deploy, enable form detection (D-031, D-045).
 const RECEPCION_ACTIVA = false;
+const CV_MAX_MB = 5;
 
 const lines = [
-  { id: 'implantes', name: 'Implantes' },
-  { id: 'equipamiento', name: 'Equipamiento' },
-  { id: 'consumibles', name: 'Consumibles quirúrgicos' },
+  { id: 'implantes', name: 'Implantes', img: hipRender, alt: 'Visualización conceptual de una prótesis de cadera en vista explosionada: vástago, cabeza cerámica y copa.', caption: 'Visualización conceptual: prótesis de cadera.' },
+  { id: 'equipamiento', name: 'Equipamiento', img: instrumentRender, alt: 'Visualización conceptual de un instrumento quirúrgico con mango navy y punta hexagonal.', caption: 'Visualización conceptual: instrumento quirúrgico.' },
+  { id: 'consumibles', name: 'Consumibles quirúrgicos', img: consumablesRender, alt: 'Visualización conceptual de agujas de Kirschner, una broca y tornillos.', caption: 'Visualización conceptual: agujas, broca y tornillos.' },
 ];
 ---
 <Base title="FIARIL Orthopedics · La precisión lo cambia todo." overlay>
-  <!-- HERO: F05 Precision Field. The copy never depends on the canvas. -->
-  <section class="hero" aria-labelledby="hero-title">
+  <!-- ============ ACT I · LIGHT ============ -->
+  <section class="hero" data-surface="mineral" aria-labelledby="hero-title">
     <canvas class="hero-field" aria-hidden="true"></canvas>
     <div class="wrap hero-grid">
       <div class="hero-stage" aria-hidden="true"></div>
       <div class="hero-copy">
-        <h1 id="hero-title" class="display" data-clear>La precisión lo cambia todo.</h1>
-        <p class="hero-lede" data-clear>Tecnología ortopédica y conocimiento especializado al servicio de cada procedimiento.</p>
+        <h1 id="hero-title" class="t-display" data-clear>La precisión lo cambia todo.</h1>
+        <p class="t-lead hero-lede" data-clear>Tecnología ortopédica y conocimiento especializado al servicio de cada procedimiento.</p>
         <div class="hero-actions" data-clear>
           <a class="btn" href="#contacto">Solicitar cotización</a>
           <a class="btn btn--ghost" href="#especialidades">Explorar especialidades</a>
@@ -34,130 +43,171 @@ const lines = [
     </div>
   </section>
 
-  <!-- NOSOTROS: what FIARIL is, as a technical sheet -->
-  <section id="nosotros" class="section about" aria-labelledby="about-title">
+  <section id="nosotros" class="surface-mist section about" data-surface="mist" aria-labelledby="about-title">
+    <div class="ruler" aria-hidden="true"></div>
     <div class="wrap about-grid">
-      <h2 id="about-title" class="statement" data-reveal>Suministro especializado y presencia técnica en el procedimiento.</h2>
-      <div class="about-body">
-        <p class="about-lede" data-reveal style="--i: 1">FIARIL Orthopedics es una empresa especializada en soluciones ortopédicas. Suministra implantes, equipamiento y consumibles quirúrgicos a instituciones de salud y acompaña técnicamente a los equipos durante los procedimientos quirúrgicos.</p>
+      <div class="about-copy">
+        <h2 id="about-title" class="t-title" data-reveal>Suministro especializado y presencia técnica en el procedimiento.</h2>
+        <p class="t-lead" data-reveal style="--i: 1">FIARIL Orthopedics suministra implantes, equipamiento y consumibles quirúrgicos a instituciones de salud y acompaña técnicamente a los equipos durante los procedimientos quirúrgicos.</p>
         <dl class="spec">
-          <div data-reveal style="--i: 2"><dt>Suministro</dt><dd>Implantes, equipamiento y consumibles quirúrgicos</dd></div>
-          <div data-reveal style="--i: 3"><dt>Para</dt><dd>Instituciones de salud: áreas de compras y equipos quirúrgicos</dd></div>
-          <div data-reveal style="--i: 4"><dt>En quirófano</dt><dd>Acompañamiento técnico durante el procedimiento</dd></div>
-          <div data-reveal style="--i: 5"><dt>Cotización</dt><dd>Bajo solicitud, para cada institución</dd></div>
+          <div data-reveal style="--i: 2"><dt class="t-meta">Suministro</dt><dd>Implantes, equipamiento y consumibles quirúrgicos</dd></div>
+          <div data-reveal style="--i: 3"><dt class="t-meta">Para</dt><dd>Instituciones de salud: áreas de compras y equipos quirúrgicos</dd></div>
+          <div data-reveal style="--i: 4"><dt class="t-meta">En quirófano</dt><dd>Acompañamiento técnico durante el procedimiento</dd></div>
+          <div data-reveal style="--i: 5"><dt class="t-meta">Cotización</dt><dd>Bajo solicitud, para cada institución</dd></div>
         </dl>
       </div>
+      <figure class="figure xray xray-plate about-figure" data-reveal="mask">
+        <div class="about-frame"><Image src={kneeXray} alt="Radiografía lateral de una rodilla con prótesis total." widths={[400, 640, 900]} sizes="(min-width: 64em) 36vw, 90vw" loading="lazy" /></div>
+        <figcaption class="t-meta">Radiografía postoperatoria de una prótesis de rodilla. Imagen ilustrativa.</figcaption>
+      </figure>
     </div>
   </section>
+  <div class="band-into surface-mist" style="--band: var(--orbital-navy)" aria-hidden="true"></div>
 
-  <!-- ESPECIALIDADES: the three confirmed supply lines. Per-specialty catalogue is pending (PRODUCT.md [P]). -->
-  <section id="especialidades" class="section lines" aria-labelledby="lines-title">
+  <!-- ============ ACT II · OPERATING ROOM ============ -->
+  <section id="especialidades" class="surface-navy section lines" data-surface="navy" aria-labelledby="lines-title">
     <div class="wrap">
-      <div class="lines-head">
-        <h2 id="lines-title" data-reveal>Especialidades</h2>
-        <p data-reveal style="--i: 1">Tres líneas de suministro para cirugía ortopédica.</p>
+      <div class="section-head">
+        <h2 id="lines-title" class="t-title" data-reveal>Especialidades</h2>
+        <p class="t-lead" data-reveal style="--i: 1">Tres líneas de suministro para cirugía ortopédica.</p>
       </div>
-      <ul class="lines-list">
-        {lines.map((l, i) => (
-          <li data-reveal style={`--i: ${i + 1}`}>
-            <a href="#contacto" data-interes={l.id}>
-              <span class="line-name">{l.name}</span>
-              <span class="line-action">Solicitar información</span>
-            </a>
+      <ol class="lines-list">
+        {lines.map((l) => (
+          <li class="line">
+            <figure class="figure line-figure" data-reveal="mask">
+              <div class="line-stage">
+                <div class="parallax"><Picture src={l.img} alt={l.alt} formats={['avif', 'webp']} widths={[420, 720, 1080]} sizes="(min-width: 64em) 46vw, 92vw" loading="lazy" /></div>
+              </div>
+              <figcaption class="t-meta">{l.caption}</figcaption>
+            </figure>
+            <div class="line-copy">
+              <h3 class="t-subtitle" data-reveal>{l.name}</h3>
+              <a class="btn btn--ghost" href="#contacto" data-interes={l.id} data-reveal style="--i: 1">Solicitar información</a>
+            </div>
           </li>
         ))}
-      </ul>
-      <p class="lines-note" data-reveal>El catálogo por especialidad se publicará en esta sección. Mientras tanto, solicite información sobre el producto o el procedimiento que necesita.</p>
+      </ol>
+      <p class="t-lead lines-note" data-reveal>El catálogo por especialidad se publicará en esta sección. Mientras tanto, solicite información sobre el producto o el procedimiento que necesita.</p>
     </div>
   </section>
+  <div class="fade-between" style="--from: var(--orbital-navy); --to: var(--graphite)" aria-hidden="true"></div>
 
-  <!-- ACOMPAÑAMIENTO: the "quirófano nocturno" moment (inverse surface, B) -->
-  <section id="acompanamiento" class="section care surface-inverse" aria-labelledby="care-title">
+  <section id="tecnologia" class="surface-graphite section tech" data-surface="graphite" aria-labelledby="tech-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="tech-title" class="t-title" data-reveal>Tecnología ortopédica</h2>
+        <p class="t-lead" data-reveal style="--i: 1">Anatomía, materiales y geometría, en una visualización que se puede recorrer.</p>
+      </div>
+      <div class="tech-grid">
+        <div class="viewer" data-reveal="mask">
+          <div class="viewer-stage">
+            <Picture class="viewer-fallback" src={hipRender} alt="" formats={['avif', 'webp']} widths={[420, 720]} sizes="(min-width: 64em) 40vw, 80vw" loading="lazy" />
+            <canvas class="viewer-canvas" role="img" aria-label="Visualización 3D conceptual de una prótesis de cadera."></canvas>
+          </div>
+          <div class="viewer-controls">
+            <div class="seg" role="group" aria-label="Modelo">
+              <button type="button" aria-pressed="true" data-model="hip">Prótesis de cadera</button>
+              <button type="button" aria-pressed="false" data-model="plate">Placa de fijación</button>
+            </div>
+            <div class="seg" role="group" aria-label="Vista">
+              <button type="button" aria-pressed="true" data-view="material">Material</button>
+              <button type="button" aria-pressed="false" data-view="geometry">Geometría</button>
+            </div>
+            <button class="viewer-pause" type="button" hidden>Pausar rotación</button>
+          </div>
+          <p class="t-meta">Visualización conceptual. No representa productos de FIARIL ni especificaciones reales.</p>
+        </div>
+        <figure class="figure xray tech-xray" data-reveal="mask">
+          <div class="tech-frame"><Image src={hipXray} alt="Radiografía de cadera con artroplastia total." widths={[360, 560, 800]} sizes="(min-width: 64em) 26vw, 80vw" loading="lazy" /></div>
+          <figcaption class="t-meta">Radiografía de cadera con artroplastia total. Imagen ilustrativa.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+  <div class="fade-between" style="--from: var(--graphite); --to: var(--orbital-navy)" aria-hidden="true"></div>
+
+  <section id="acompanamiento" class="surface-navy section care" data-surface="navy" aria-labelledby="care-title">
     <div class="lamp" aria-hidden="true"></div>
     <div class="wrap care-grid">
-      <h2 id="care-title" class="statement" data-reveal>En el quirófano, junto al equipo quirúrgico.</h2>
+      <h2 id="care-title" class="t-title" data-reveal>En el quirófano, junto al equipo quirúrgico.</h2>
       <div class="care-body">
-        <p data-reveal style="--i: 1">Además de suministrar el material, FIARIL acompaña técnicamente a los equipos durante el procedimiento quirúrgico.</p>
+        <p class="t-lead" data-reveal style="--i: 1">Además de suministrar el material, FIARIL acompaña técnicamente a los equipos durante el procedimiento quirúrgico.</p>
         <a class="btn" href="#contacto" data-interes="acompanamiento" data-reveal style="--i: 2">Consultar acompañamiento técnico</a>
       </div>
     </div>
   </section>
+  <div class="band-out surface-mineral" style="--band: var(--orbital-navy)" aria-hidden="true"></div>
 
-  <!-- CONTACTO: Netlify Forms. Success is shown only when the server confirms it. -->
-  <section id="contacto" class="section contact" aria-labelledby="contact-title">
-    <div class="wrap contact-grid">
-      <div class="contact-intro">
-        <h2 id="contact-title" data-reveal>Solicitar cotización</h2>
-        <p data-reveal style="--i: 1">Describa el producto, la línea o el procedimiento, y la institución para la que solicita la cotización.</p>
+  <!-- ============ ACT III · BACK TO LIGHT ============ -->
+  <section id="contacto" class="surface-mineral section contact" data-surface="mineral" aria-labelledby="contact-title">
+    <div class="wrap form-grid">
+      <div class="form-intro">
+        <h2 id="contact-title" class="t-title" data-reveal>Solicitar cotización</h2>
+        <p class="t-lead" data-reveal style="--i: 1">Describa el producto, la línea o el procedimiento, y la institución para la que solicita la cotización.</p>
       </div>
-
       <form class="form" name="cotizacion" method="POST" novalidate
-        data-netlify={RECEPCION_ACTIVA ? 'true' : undefined}
-        netlify-honeypot={RECEPCION_ACTIVA ? 'sitio-web' : undefined}
-        data-reception={RECEPCION_ACTIVA ? 'on' : 'off'}>
+        data-netlify={RECEPCION_ACTIVA ? 'true' : undefined} netlify-honeypot={RECEPCION_ACTIVA ? 'sitio-web' : undefined}
+        data-reception={RECEPCION_ACTIVA ? 'on' : 'off'}
+        data-pending-title="Solicitud completa, sin enviar."
+        data-pending-body="La recepción de solicitudes en línea se habilitará próximamente. Sus datos no se enviaron ni se almacenaron, y siguen en el formulario."
+        data-ok-text="Solicitud enviada. FIARIL recibió su solicitud de cotización.">
         <input type="hidden" name="form-name" value="cotizacion" />
         <p class="trap" aria-hidden="true"><label>No llenar este campo <input name="sitio-web" tabindex="-1" autocomplete="off" /></label></p>
-
-        <div class="field">
-          <label for="f-nombre">Nombre y apellidos</label>
-          <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="e-nombre" />
-          <p class="error" id="e-nombre" data-msg="Indique su nombre."></p>
-        </div>
-        <div class="field">
-          <label for="f-institucion">Institución</label>
-          <input id="f-institucion" name="institucion" type="text" autocomplete="organization" required aria-describedby="e-institucion" />
-          <p class="error" id="e-institucion" data-msg="Indique la institución de salud."></p>
-        </div>
-        <div class="field">
-          <label for="f-perfil">Perfil</label>
-          <select id="f-perfil" name="perfil" required aria-describedby="e-perfil">
-            <option value="" selected disabled>Seleccione una opción</option>
-            <option>Compras o abastecimiento</option>
-            <option>Cirujano o cirujana</option>
-            <option>Personal de quirófano</option>
-            <option>Otro</option>
-          </select>
-          <p class="error" id="e-perfil" data-msg="Seleccione su perfil."></p>
-        </div>
-        <div class="field">
-          <label for="f-interes">Línea de interés</label>
-          <select id="f-interes" name="interes" required aria-describedby="e-interes">
-            <option value="" selected disabled>Seleccione una opción</option>
-            <option value="implantes">Implantes</option>
-            <option value="equipamiento">Equipamiento</option>
-            <option value="consumibles">Consumibles quirúrgicos</option>
-            <option value="acompanamiento">Acompañamiento técnico</option>
-            <option value="otra">Otra</option>
-          </select>
-          <p class="error" id="e-interes" data-msg="Seleccione una línea de interés."></p>
-        </div>
-        <div class="field">
-          <label for="f-correo">Correo electrónico</label>
-          <input id="f-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@institucion.mx" aria-describedby="e-correo" />
-          <p class="error" id="e-correo" data-msg="Indique un correo válido, por ejemplo nombre@institucion.mx."></p>
-        </div>
-        <div class="field">
-          <label for="f-telefono">Teléfono <span class="optional">(opcional)</span></label>
-          <input id="f-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" />
-        </div>
-        <div class="field wide">
-          <label for="f-mensaje">Mensaje</label>
-          <textarea id="f-mensaje" name="mensaje" rows="5" required aria-describedby="e-mensaje" placeholder="Producto, cantidad, procedimiento o fecha prevista…"></textarea>
-          <p class="error" id="e-mensaje" data-msg="Describa qué necesita cotizar."></p>
-        </div>
-        <div class="field wide check">
-          <input id="f-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="e-privacidad" />
-          <label for="f-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label>
-          <p class="error" id="e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p>
-        </div>
+        <div class="field"><label for="q-nombre">Nombre y apellidos</label><input id="q-nombre" name="nombre" autocomplete="name" required aria-describedby="q-e-nombre" /><p class="error" id="q-e-nombre" data-msg="Indique su nombre."></p></div>
+        <div class="field"><label for="q-institucion">Institución</label><input id="q-institucion" name="institucion" autocomplete="organization" required aria-describedby="q-e-institucion" /><p class="error" id="q-e-institucion" data-msg="Indique la institución de salud."></p></div>
+        <div class="field"><label for="q-perfil">Perfil</label>
+          <select id="q-perfil" name="perfil" required aria-describedby="q-e-perfil"><option value="" selected disabled>Seleccione una opción</option><option>Compras o abastecimiento</option><option>Cirujano o cirujana</option><option>Personal de quirófano</option><option>Otro</option></select>
+          <p class="error" id="q-e-perfil" data-msg="Seleccione su perfil."></p></div>
+        <div class="field"><label for="q-interes">Línea de interés</label>
+          <select id="q-interes" name="interes" required aria-describedby="q-e-interes"><option value="" selected disabled>Seleccione una opción</option><option value="implantes">Implantes</option><option value="equipamiento">Equipamiento</option><option value="consumibles">Consumibles quirúrgicos</option><option value="acompanamiento">Acompañamiento técnico</option><option value="otra">Otra</option></select>
+          <p class="error" id="q-e-interes" data-msg="Seleccione una línea de interés."></p></div>
+        <div class="field"><label for="q-correo">Correo electrónico</label><input id="q-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@institucion.mx" aria-describedby="q-e-correo" /><p class="error" id="q-e-correo" data-msg="Indique un correo válido, por ejemplo nombre@institucion.mx."></p></div>
+        <div class="field"><label for="q-telefono">Teléfono <span class="optional">(opcional)</span></label><input id="q-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" /></div>
+        <div class="field wide"><label for="q-mensaje">Mensaje</label><textarea id="q-mensaje" name="mensaje" rows="5" required aria-describedby="q-h-mensaje q-e-mensaje" placeholder="Producto, cantidad, procedimiento o fecha prevista…"></textarea><p class="help" id="q-h-mensaje">Cuanto más concreto sea, más precisa podrá ser la cotización.</p><p class="error" id="q-e-mensaje" data-msg="Describa qué necesita cotizar."></p></div>
+        <div class="field wide check"><input id="q-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="q-e-privacidad" /><label for="q-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label><p class="error" id="q-e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p></div>
         <div class="wide submit-row">
           <button class="btn" type="submit">Solicitar cotización</button>
-          {!RECEPCION_ACTIVA && (
-            <p class="reception" id="reception-note">
-              <span class="reception-dot" aria-hidden="true"></span>
-              Recepción en línea en preparación: este formulario todavía no envía datos.
-            </p>
-          )}
+          {!RECEPCION_ACTIVA && <p class="reception"><span class="reception-dot" aria-hidden="true"></span>Recepción en línea en preparación: este formulario todavía no envía datos.</p>}
+        </div>
+        <div class="wide status" role="status" aria-live="polite" tabindex="-1"></div>
+      </form>
+    </div>
+  </section>
+  <div class="ruler-wrap surface-mist" aria-hidden="true"><div class="ruler"></div></div>
+
+  <section id="bolsa-de-trabajo" class="surface-mist section careers" data-surface="mist" aria-labelledby="careers-title">
+    <div class="wrap form-grid">
+      <div class="form-intro">
+        <h2 id="careers-title" class="t-title" data-reveal>Bolsa de trabajo</h2>
+        <p class="t-lead" data-reveal style="--i: 1">Buscamos personas que quieran trabajar donde la precisión, el conocimiento técnico y la tecnología importan.</p>
+        <p class="openings" data-reveal style="--i: 2"><span class="openings-dot" aria-hidden="true"></span>No hay vacantes publicadas en este momento. Las oportunidades se anunciarán en esta sección; mientras tanto, puede preparar su candidatura.</p>
+      </div>
+      <form class="form" name="candidatura" method="POST" enctype="multipart/form-data" novalidate
+        data-netlify={RECEPCION_ACTIVA ? 'true' : undefined} netlify-honeypot={RECEPCION_ACTIVA ? 'sitio-web' : undefined}
+        data-reception={RECEPCION_ACTIVA ? 'on' : 'off'}
+        data-pending-title="Candidatura completa, sin enviar."
+        data-pending-body="La recepción de candidaturas se habilitará próximamente. Sus datos y su CV no se enviaron ni se almacenaron: el archivo nunca salió de este dispositivo."
+        data-ok-text="Candidatura enviada. FIARIL recibió su candidatura.">
+        <input type="hidden" name="form-name" value="candidatura" />
+        <p class="trap" aria-hidden="true"><label>No llenar este campo <input name="sitio-web" tabindex="-1" autocomplete="off" /></label></p>
+        <div class="field"><label for="c-nombre">Nombre completo</label><input id="c-nombre" name="nombre" autocomplete="name" required aria-describedby="c-e-nombre" /><p class="error" id="c-e-nombre" data-msg="Indique su nombre completo."></p></div>
+        <div class="field"><label for="c-correo">Correo electrónico</label><input id="c-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@correo.com" aria-describedby="c-e-correo" /><p class="error" id="c-e-correo" data-msg="Indique un correo válido, por ejemplo nombre@correo.com."></p></div>
+        <div class="field"><label for="c-telefono">Teléfono <span class="optional">(opcional)</span></label><input id="c-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" /></div>
+        <div class="field"><label for="c-area">Área de interés</label><input id="c-area" name="area" required aria-describedby="c-e-area" /><p class="error" id="c-e-area" data-msg="Indique en qué área le gustaría colaborar."></p></div>
+        <div class="field wide"><label for="c-mensaje">Mensaje breve</label><textarea id="c-mensaje" name="mensaje" rows="4" maxlength="600" required aria-describedby="c-h-mensaje c-e-mensaje"></textarea><p class="help" id="c-h-mensaje">Hasta 600 caracteres: su experiencia y qué le interesa de FIARIL.</p><p class="error" id="c-e-mensaje" data-msg="Escriba un mensaje breve."></p></div>
+        <div class="field wide">
+          <span class="field-label" id="c-l-cv">CV en PDF</span>
+          <div class="file">
+            <input id="c-cv" name="cv" type="file" accept="application/pdf,.pdf" required data-max-bytes={CV_MAX_MB * 1048576} aria-labelledby="c-l-cv" aria-describedby="c-h-cv c-e-cv" />
+            <div class="file-zone" aria-hidden="true"><span class="file-button">Seleccionar PDF</span><span class="file-name">Ningún archivo seleccionado</span></div>
+          </div>
+          <p class="help" id="c-h-cv">Formato PDF, máximo {CV_MAX_MB} MB.</p>
+          <p class="error" id="c-e-cv" data-msg="Adjunte su CV en PDF." data-msg-type="El archivo debe ser un PDF." data-msg-size={`El archivo supera ${CV_MAX_MB} MB. Adjunte una versión más ligera.`}></p>
+        </div>
+        <div class="field wide check"><input id="c-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="c-e-privacidad" /><label for="c-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label><p class="error" id="c-e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p></div>
+        <div class="wide submit-row">
+          <button class="btn" type="submit">Enviar candidatura</button>
+          {!RECEPCION_ACTIVA && <p class="reception"><span class="reception-dot" aria-hidden="true"></span>Recepción de candidaturas en preparación: su CV no saldrá de este dispositivo.</p>}
         </div>
         <div class="wide status" role="status" aria-live="polite" tabindex="-1"></div>
       </form>
@@ -168,8 +218,9 @@ const lines = [
 <script>
   import field from '../lab/f05-precision-field';
   import type { Rect } from '../lab/f05-precision-field';
+  import { initForms } from '../scripts/forms';
 
-  // ---------- Hero field ----------
+  // ---------- Hero field (F05) ----------
   const hero = document.querySelector<HTMLElement>('.hero')!;
   const canvas = hero.querySelector<HTMLCanvasElement>('.hero-field')!;
   const stageEl = hero.querySelector<HTMLElement>('.hero-stage')!;
@@ -182,32 +233,50 @@ const lines = [
       const [l, t, r, b] = rect(stageEl), w = r - l, h = b - t;
       return { cx: l + w / 2, cy: t + h / 2, size: Math.max(60, Math.min(w / 3.3, h / 3.2)) };
     },
-    holes: () => [...document.querySelectorAll('.hero [data-clear]:not([hidden]), .site-header[data-state="top"] :is(.brand, .nav, .cta), .site-header .bar > :is(.brand, .cta, .menu-btn)')]
-      .map((el) => rect(el, 10)),
+    holes: () => [...document.querySelectorAll('.hero [data-clear]:not([hidden]), .site-header .shell :is(.brand, .nav, .cta, .menu-btn)')].map((el) => rect(el, 10)),
   });
-  // the lattice clears the text boxes; re-read them only when they can move
   document.fonts.ready.then(() => control.refresh());
   hero.querySelector('.hero-foot')!.addEventListener('animationend', () => control.refresh(), { once: true });
   new MutationObserver(() => control.refresh()).observe(document.querySelector('.site-header')!, { attributes: true, attributeFilter: ['data-state'] });
-
   const toggle = hero.querySelector<HTMLButtonElement>('.field-toggle')!;
   if (control.animated) {
     let paused = false;
     toggle.hidden = false;
-    toggle.addEventListener('click', () => {
-      paused = !paused;
-      control.setPaused(paused);
-      toggle.textContent = paused ? 'Reanudar animación' : 'Pausar animación';
-    });
+    toggle.addEventListener('click', () => { paused = !paused; control.setPaused(paused); toggle.textContent = paused ? 'Reanudar animación' : 'Pausar animación'; });
   }
 
-  // ---------- Editorial reveals ----------
+  // ---------- Reveals (text: fade; images: mask) ----------
   const reveal = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); reveal.unobserve(e.target); }
-  }, { rootMargin: '0px 0px -12% 0px' });
+  }, { rootMargin: '0px 0px -10% 0px' });
   document.querySelectorAll('[data-reveal]').forEach((el) => reveal.observe(el));
 
-  // ---------- Surgical lamp: the halftone light follows the cursor (fine pointers only) ----------
+  // ---------- 3D viewer: three.js is fetched only when the section approaches ----------
+  const viewerEl = document.querySelector<HTMLElement>('.viewer')!;
+  const lazy3d = new IntersectionObserver(async ([e]) => {
+    if (!e.isIntersecting) return;
+    lazy3d.disconnect();
+    const { mountViewer } = await import('../three/viewer');
+    const vcanvas = viewerEl.querySelector<HTMLCanvasElement>('.viewer-canvas')!;
+    const viewer = mountViewer(vcanvas, 'hip');
+    if (!viewer) return; // no WebGL: the static render stays
+    const names = { hip: 'una prótesis de cadera', plate: 'una placa de fijación con tornillos' } as const;
+    const press = (group: string, btn: HTMLButtonElement) => viewerEl.querySelectorAll<HTMLButtonElement>(`[${group}]`).forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    viewerEl.querySelectorAll<HTMLButtonElement>('[data-model]').forEach((b) => b.addEventListener('click', () => {
+      const m = b.dataset.model as keyof typeof names;
+      press('data-model', b); viewer.show(m);
+      vcanvas.setAttribute('aria-label', `Visualización 3D conceptual de ${names[m]}.`);
+    }));
+    viewerEl.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => { press('data-view', b); viewer.setWire(b.dataset.view === 'geometry'); }));
+    const pause = viewerEl.querySelector<HTMLButtonElement>('.viewer-pause')!;
+    if (viewer.animated) {
+      let p = false; pause.hidden = false;
+      pause.addEventListener('click', () => { p = !p; viewer.setPaused(p); pause.textContent = p ? 'Reanudar rotación' : 'Pausar rotación'; });
+    }
+  }, { rootMargin: '600px 0px' });
+  lazy3d.observe(viewerEl);
+
+  // ---------- Surgical lamp (fine pointers only) ----------
   const care = document.querySelector<HTMLElement>('.care')!;
   const lamp = care.querySelector<HTMLElement>('.lamp')!;
   let lampFrame = 0;
@@ -222,182 +291,119 @@ const lines = [
   });
   care.addEventListener('pointerleave', () => { lamp.style.removeProperty('--lx'); lamp.style.removeProperty('--ly'); });
 
-  // ---------- Contact form ----------
-  const form = document.querySelector<HTMLFormElement>('form[name="cotizacion"]')!;
-  const status = form.querySelector<HTMLElement>('.status')!;
-  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-  const interes = form.querySelector<HTMLSelectElement>('#f-interes')!;
-
-  // "Solicitar información" links preselect the line of interest
-  document.querySelectorAll<HTMLAnchorElement>('a[data-interes]').forEach((a) =>
-    a.addEventListener('click', () => { interes.value = a.dataset.interes!; }));
-
-  const fields = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[required]')];
-  const check = (el: (typeof fields)[number]) => {
-    const err = document.getElementById(el.getAttribute('aria-describedby')!)!;
-    const ok = el.type === 'checkbox' ? (el as HTMLInputElement).checked : el.checkValidity() && el.value.trim() !== '';
-    el.toggleAttribute('aria-invalid', !ok);
-    err.textContent = ok ? '' : err.dataset.msg!;
-    return ok;
-  };
-  // once a field has been flagged, clear its error as soon as it becomes valid. Validating on `input`
-  // (not `blur`) matters: a message collapsing on blur shifts the layout between mousedown and
-  // mouseup, and the click on the next control is lost.
-  fields.forEach((el) => el.addEventListener(el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input', () => el.hasAttribute('aria-invalid') && check(el)));
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const invalid = fields.filter((el) => !check(el));
-    if (invalid.length) { invalid[0].focus(); status.replaceChildren(); status.dataset.state = ''; return; }
-
-    status.dataset.state = '';
-    status.replaceChildren();
-
-    if (form.dataset.reception !== 'on') {
-      // Honest state: the request is complete but nothing was sent or stored.
-      status.dataset.state = 'pending';
-      status.append(
-        Object.assign(document.createElement('p'), { className: 'status-title', textContent: 'Solicitud completa, sin enviar.' }),
-        Object.assign(document.createElement('p'), { textContent: 'La recepción de solicitudes en línea se habilitará próximamente. Sus datos no se enviaron ni se almacenaron, y siguen en el formulario.' }),
-      );
-      status.focus();
-      return;
-    }
-
-    submit.disabled = true;
-    submit.textContent = 'Enviando…';
-    try {
-      const res = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString(),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      form.reset();
-      status.dataset.state = 'ok';
-      status.textContent = 'Solicitud enviada. FIARIL recibió su solicitud de cotización.';
-    } catch (err) {
-      status.dataset.state = 'error';
-      status.textContent = /^\d+$/.test((err as Error).message)
-        ? `No se pudo enviar la solicitud: el servidor respondió con el error ${(err as Error).message}. Sus datos siguen en el formulario; inténtelo de nuevo más tarde.`
-        : 'No se pudo enviar la solicitud: no hay conexión con el servidor. Sus datos siguen en el formulario; inténtelo de nuevo.';
-    } finally {
-      submit.disabled = false;
-      submit.textContent = 'Solicitar cotización';
-    }
-  });
+  // ---------- Forms ----------
+  initForms();
+  const interes = document.querySelector<HTMLSelectElement>('#q-interes')!;
+  document.querySelectorAll<HTMLAnchorElement>('a[data-interes]').forEach((a) => a.addEventListener('click', () => { interes.value = a.dataset.interes!; }));
 </script>
 
 <style>
   /* ============ Hero ============ */
   .hero { position: relative; display: grid; min-height: 100svh; }
-  /* the field dissolves into the next section instead of ending on a hard edge */
   .hero-field { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; -webkit-mask-image: linear-gradient(#000 82%, transparent); mask-image: linear-gradient(#000 82%, transparent); }
   .hero-grid {
-    position: relative;
-    display: grid; grid-template-rows: minmax(min(46svh, 26rem), 1fr) auto auto; gap: var(--space-m);
-    padding-block: var(--header-h) var(--space-m);
-    pointer-events: none; /* the cursor reaches the field; controls opt back in */
+    position: relative; display: grid; grid-template-rows: minmax(min(46svh, 26rem), 1fr) auto auto; gap: var(--space-m);
+    padding-block: var(--header-h) var(--space-m); pointer-events: none;
   }
   .hero-grid :is(a, button) { pointer-events: auto; }
   .hero-copy { align-self: end; }
-  .hero-copy .display { max-width: 11ch; margin: 0; color: var(--color-text); }
-  .hero-lede { margin: var(--space-m) 0 0; max-width: 34ch; font-size: var(--step-1); line-height: 1.45; color: var(--color-text-muted); }
+  .hero-copy .t-display { max-width: 11ch; margin: 0; }
+  .hero-lede { margin-top: var(--space-m); max-width: 34ch; }
   .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-l); width: fit-content; }
   .hero-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-s); }
-  .signature { margin: 0; font-size: var(--step--1); font-weight: var(--weight-heading); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); }
-  .field-toggle {
+  .signature { margin: 0; font-size: var(--type-meta); font-weight: var(--weight-heading); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); }
+  .field-toggle, .viewer-pause, .seg button {
     min-height: 44px; padding: 0 1em; border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius-pill);
-    background: var(--color-surface); color: var(--color-text); font: var(--weight-ui) var(--step--1) / 1 var(--font-sans);
+    background: transparent; color: var(--color-text); font: var(--weight-ui) var(--type-meta) / 1 var(--font-sans);
     cursor: pointer; touch-action: manipulation;
-    transition: background-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
   }
-  .field-toggle:active { transform: scale(var(--press-scale)); }
-  @media (hover: hover) and (pointer: fine) { .field-toggle:hover { background: var(--color-surface-raised); } }
-
-  /* two columns: desktop, and phones held sideways */
+  .field-toggle { background: var(--color-surface); }
+  :is(.field-toggle, .viewer-pause, .seg button):active { transform: scale(var(--press-scale)); }
+  @media (hover: hover) and (pointer: fine) { :is(.field-toggle, .viewer-pause):hover { border-color: var(--color-text); } }
   @media (min-width: 64em), (orientation: landscape) and (min-width: 40em) and (max-height: 34em) {
     .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: 1fr auto; column-gap: var(--gutter); }
     .hero-copy { grid-area: 1 / 1; align-self: center; }
     .hero-stage { grid-area: 1 / 2; }
     .hero-foot { grid-area: 2 / 1 / 3 / 3; }
   }
-  @media (min-width: 64em) {
-    .hero-grid { padding-top: calc(136px + 2 * var(--space-m)); }
-  }
+  @media (min-width: 64em) { .hero-grid { padding-top: calc(136px + var(--space-l)); } }
   @media (orientation: landscape) and (max-height: 34em) {
-    .hero-grid { padding-top: calc(var(--header-h) + var(--space-m)); }
-    .hero-copy .display { font-size: clamp(2rem, 1rem + 5vh, 3rem); }
-    .hero-lede { font-size: var(--step-0); margin-top: var(--space-s); }
+    .hero-grid { padding-top: calc(var(--header-h) + var(--space-s)); }
+    .hero-copy .t-display { font-size: clamp(2rem, 1rem + 5vh, 3rem); }
+    .hero-lede { margin-top: var(--space-s); font-size: var(--step-0); }
     .hero-actions { margin-top: var(--space-m); }
   }
-
-  /* one orchestrated entrance: the copy settles while the anatomy assembles */
   @media (prefers-reduced-motion: no-preference) {
     .hero-copy > *, .hero-foot { animation: hero-in 900ms var(--ease-out) both; }
-    .hero-lede { animation-delay: 120ms; }
-    .hero-actions { animation-delay: 220ms; }
-    .hero-foot { animation-delay: 600ms; }
+    .hero-lede { animation-delay: 120ms; } .hero-actions { animation-delay: 220ms; } .hero-foot { animation-delay: 600ms; }
     @keyframes hero-in { from { opacity: 0; transform: translateY(18px); } }
   }
 
-  /* one heading voice across sections: regular weight, tight tracking (display 300 stays in the hero) */
-  .section h2 { font-weight: var(--weight-body); letter-spacing: -0.03em; }
-
-  /* ============ Nosotros ============ */
-  .about-grid { display: grid; gap: var(--space-l); }
-  @media (min-width: 64em) { .about-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); } }
-  .statement { font-size: var(--step-3); font-weight: var(--weight-body); letter-spacing: -0.03em; line-height: 1.08; max-width: 18ch; }
-  .about-lede { font-size: var(--step-1); line-height: 1.5; max-width: 40ch; }
-  .spec { margin: var(--space-l) 0 0; }
+  /* ============ Nosotros (mist) ============ */
+  .about { padding-top: 0; }
+  .about .ruler { margin-bottom: var(--space-xl); }
+  .about-grid { display: grid; gap: var(--space-l); align-items: center; }
+  .about-copy { display: grid; gap: var(--space-m); }
+  @media (min-width: 64em) { .about-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--gutter); } }
+  .about-frame { aspect-ratio: 3 / 4; max-height: 78svh; }
+  .about-figure { width: min(100%, 30rem); justify-self: center; }
+  .spec { margin: var(--space-s) 0 0; }
   .spec div { position: relative; display: grid; gap: var(--space-2xs); padding-block: var(--space-s); }
-  @media (min-width: 40em) { .spec div { grid-template-columns: 11rem 1fr; gap: var(--space-m); } }
-  /* hairlines are drawn like a technical sheet's rules */
-  .spec div::before { content: ''; position: absolute; inset: 0 0 auto; height: var(--border-width); background: var(--color-border); transform-origin: left; }
-  .spec div:last-child { box-shadow: inset 0 calc(-1 * var(--border-width)) 0 var(--color-border); }
+  @media (min-width: 40em) { .spec div { grid-template-columns: 10rem 1fr; gap: var(--space-m); align-items: baseline; } }
+  .spec div::before { content: ''; position: absolute; inset: 0 0 auto; height: var(--border-width); background: var(--color-border-control); opacity: 0.45; transform-origin: left; }
+  .spec div:last-child { box-shadow: inset 0 calc(-1 * var(--border-width)) 0 color-mix(in srgb, var(--color-border-control) 45%, transparent); }
   @media (prefers-reduced-motion: no-preference) {
     .js .spec div::before { transition: transform 900ms var(--ease-in-out); transition-delay: calc(var(--i, 0) * 70ms); }
     .js .spec div:not(.is-in)::before { transform: scaleX(0); }
   }
-  .spec dt { font-size: var(--step--1); font-weight: var(--weight-heading); color: var(--color-text-muted); padding-top: 0.2em; }
   .spec dd { margin: 0; }
 
-  /* ============ Especialidades ============ */
-  .lines-head { display: grid; gap: var(--space-xs); margin-bottom: var(--space-l); }
-  @media (min-width: 64em) { .lines-head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-items: baseline; } }
-  .lines-head h2, .lines-head p { margin: 0; }
-  .lines-head p { color: var(--color-text-muted); font-size: var(--step-1); }
-  .lines-list { list-style: none; margin: 0; padding: 0; border-bottom: var(--border-width) solid var(--color-border); }
-  .lines-list li { border-top: var(--border-width) solid var(--color-border); }
-  .lines-list a {
-    position: relative; isolation: isolate; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2xs) var(--space-m);
-    padding-block: var(--space-m); text-decoration: none; overflow: clip;
+  /* ============ Especialidades (navy) ============ */
+  .lines-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-xl); }
+  .line { display: grid; gap: var(--space-m); align-items: center; }
+  @media (min-width: 48em) {
+    .line { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--gutter); }
+    /* mirrored rows keep the same proportions: the image always gets the wide track */
+    .line:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+    .line:nth-child(even) .line-figure { order: 2; }
   }
-  .line-name {
-    font-size: var(--step-4); font-weight: var(--weight-display); letter-spacing: -0.035em; line-height: 1;
-    transition: transform var(--dur-panel) var(--ease-out);
+  .line-stage {
+    position: relative; aspect-ratio: 4 / 3; overflow: clip; border-radius: var(--radius);
+    /* studio light: a soft pool on the surface, the render floats in it */
+    background: radial-gradient(60% 70% at 50% 45%, color-mix(in srgb, var(--mineral) 11%, transparent), transparent 72%), var(--color-surface-raised);
   }
-  .line-action { font-size: var(--step--1); font-weight: var(--weight-ui); color: var(--color-text-muted); transition: color var(--dur-hover) var(--ease-out); }
-  /* hover: the halftone screen rises behind the row, the name steps forward */
-  .lines-list a::after {
-    content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0;
-    background: radial-gradient(circle, color-mix(in srgb, var(--orbital-navy) 22%, transparent) 1.1px, transparent 1.6px) 0 0 / 9px 9px;
-    -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000); mask-image: linear-gradient(90deg, transparent 30%, #000);
-    transition: opacity var(--dur-panel) var(--ease-out);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .lines-list a:hover .line-name { transform: translateX(0.35em); }
-    .lines-list a:hover .line-action { color: var(--color-accent); }
-    .lines-list a:hover::after { opacity: 1; }
-  }
-  .lines-list a:focus-visible { outline-offset: -2px; }
-  @media (max-width: 39.99em) { .lines-list a { flex-direction: column; align-items: flex-start; } }
-  .lines-note { margin-top: var(--space-m); color: var(--color-text-muted); }
+  /* explicit box + contain: the render's intrinsic size can never drive the layout */
+  .line-stage .parallax { position: absolute; inset: 0; }
+  .line-stage :global(img) { position: absolute; inset: 8% 10%; width: 80%; height: 84%; object-fit: contain; filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.45)); }
+  .line-copy { display: grid; gap: var(--space-m); justify-items: start; }
+  .lines-note { margin-top: var(--space-xl); }
 
-  /* ============ Acompañamiento: quirófano nocturno ============ */
+  /* ============ Tecnología (graphite) ============ */
+  .tech-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 64em) { .tech-grid { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: var(--gutter); align-items: end; } }
+  .viewer { display: grid; gap: var(--space-s); }
+  .viewer-stage {
+    position: relative; aspect-ratio: 4 / 3; overflow: clip; border-radius: var(--radius);
+    background: radial-gradient(55% 65% at 50% 45%, color-mix(in srgb, var(--mineral) 10%, transparent), transparent 75%), var(--color-surface-raised);
+  }
+  .viewer-stage :global(img) { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: contain; transition: opacity var(--dur-reveal) var(--ease-out); }
+  .viewer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; opacity: 0; transition: opacity var(--dur-reveal) var(--ease-out); }
+  .viewer:global(.is-live) .viewer-canvas { opacity: 1; }
+  .viewer:global(.is-live) .viewer-stage :global(img) { opacity: 0; }
+  .viewer-controls { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-s); align-items: center; }
+  .seg { display: inline-flex; padding: 3px; gap: 2px; border: var(--border-width) solid var(--color-border); border-radius: var(--radius-pill); }
+  .seg button { border-color: transparent; color: var(--color-text-muted); }
+  .seg button[aria-pressed='true'] { background: var(--color-primary); color: var(--color-on-primary); }
+  @media (hover: hover) and (pointer: fine) { .seg button[aria-pressed='false']:hover { color: var(--color-text); } }
+  .viewer-pause { margin-left: auto; }
+  .tech-frame { aspect-ratio: 3 / 5; max-height: 70svh; }
+  .tech-xray { width: min(100%, 24rem); justify-self: center; }
+
+  /* ============ Acompañamiento (navy, surgical lamp) ============ */
   @property --lx { syntax: '<percentage>'; inherits: false; initial-value: 62%; }
   @property --ly { syntax: '<percentage>'; inherits: false; initial-value: 42%; }
-  .care { position: relative; overflow: clip; display: grid; min-height: min(56rem, 92svh); padding-block: var(--space-2xl); }
+  .care { position: relative; overflow: clip; display: grid; min-height: min(52rem, 88svh); }
   .lamp {
     position: absolute; inset: 0 0 45% 0; pointer-events: none;
     background:
@@ -408,65 +414,20 @@ const lines = [
     transition: --lx 900ms var(--ease-out), --ly 900ms var(--ease-out);
   }
   .care-grid { position: relative; display: grid; gap: var(--space-l); align-self: end; }
-  .care .statement { font-size: var(--step-4); font-weight: var(--weight-display); letter-spacing: -0.035em; max-width: 14ch; margin: 0; }
-  .care-body p { font-size: var(--step-1); line-height: 1.5; color: var(--color-text-muted); max-width: 36ch; }
-  .care-body .btn { margin-top: var(--space-s); }
+  .care .t-title { max-width: 14ch; }
+  .care-body { display: grid; gap: var(--space-m); justify-items: start; }
   @media (min-width: 64em) {
     .lamp { inset: 0 0 0 45%; }
-    .care-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-self: center; }
+    .care-grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: var(--gutter); align-self: center; }
     .care-body { grid-column: 1; }
   }
 
-  /* ============ Contacto ============ */
-  .contact-grid { display: grid; gap: var(--space-l); }
-  @media (min-width: 64em) { .contact-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); } }
-  .contact-intro p { font-size: var(--step-1); line-height: 1.5; color: var(--color-text-muted); max-width: 32ch; }
-  .form { display: grid; gap: var(--space-m) var(--space-s); align-content: start; }
-  @media (min-width: 40em) { .form { grid-template-columns: 1fr 1fr; } .form .wide { grid-column: 1 / -1; } }
-  .trap { position: absolute; left: -100vw; }
-  .field { display: grid; gap: var(--space-2xs); align-content: start; }
-  .field label { font-size: var(--step--1); font-weight: var(--weight-heading); }
-  .optional { font-weight: var(--weight-body); color: var(--color-text-muted); }
-  .field :is(input, select, textarea) {
-    width: 100%; min-height: 48px; padding: 0.7em 0.85em;
-    font: inherit; color: var(--color-text); background-color: var(--color-surface-raised);
-    border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius);
-    transition: border-color var(--dur-hover) var(--ease-out);
-  }
-  .field textarea { resize: vertical; min-height: 8rem; }
-  .field select {
-    appearance: none; padding-right: 2.5em;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2307253f' stroke-width='1.5'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 0.95em center;
-  }
-  .field ::placeholder { color: var(--color-text-muted); opacity: 1; }
-  .field :is(input, select, textarea):focus-visible { outline-offset: 1px; border-color: var(--color-text); }
-  .field [aria-invalid] { border-color: var(--color-accent); }
-  .error { margin: 0; min-height: 0; font-size: var(--step--1); font-weight: var(--weight-ui); color: var(--color-accent); }
-  .error:empty { display: none; }
-  .check { grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-xs); }
-  .check input { width: 22px; height: 22px; min-height: 0; margin: 0; accent-color: var(--orbital-navy); }
-  .check label { font-weight: var(--weight-body); font-size: var(--step-0); }
-  .check .error { grid-column: 1 / -1; }
-  .submit-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-s); }
-  .submit-row .btn:disabled { opacity: 0.6; cursor: progress; }
-  .reception { display: flex; align-items: baseline; gap: 0.6em; margin: 0; font-size: var(--step--1); color: var(--color-text-muted); }
-  .reception-dot { flex: none; align-self: flex-start; margin-top: 0.45em; width: 8px; height: 8px; border-radius: 50%; background: var(--color-energy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--energy-yellow) 25%, transparent); }
-  .status:empty { display: none; }
-  .status { font-size: var(--step--1); font-weight: var(--weight-ui); outline-offset: 4px; }
-  /* status children are created by script: they carry no Astro scope attribute */
-  .status :global(p) { margin: 0; max-width: 60ch; }
-  .status[data-state='error'] { color: var(--color-accent); }
-  .status[data-state='ok'] { color: var(--color-text); }
-  /* complete-but-not-sent: a calm panel, not an error */
-  .status[data-state='pending'] {
-    display: grid; gap: var(--space-2xs); padding: var(--space-s) var(--space-m);
-    border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius); background: var(--color-surface-raised);
-    font-weight: var(--weight-body); color: var(--color-text-muted);
-  }
-  .status :global(.status-title) { font-weight: var(--weight-heading); color: var(--color-text); }
-  @media (prefers-reduced-motion: no-preference) {
-    .status[data-state='pending'] { animation: status-in var(--dur-panel) var(--ease-out); }
-    @keyframes status-in { from { opacity: 0; transform: translateY(6px); } }
-  }
+  /* ============ Forms (contact + careers share one layout) ============ */
+  .form-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 64em) { .form-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-items: start; } }
+  .form-intro { display: grid; gap: var(--space-m); align-content: start; }
+  @media (min-width: 64em) { .form-intro { position: sticky; top: calc(var(--header-h) + var(--space-l)); } }
+  .ruler-wrap { padding-top: var(--space-s); }
+  .openings { display: flex; gap: 0.7em; align-items: baseline; margin: 0; padding: var(--space-s) var(--space-m); border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius); background: var(--color-surface-raised); font-size: var(--type-meta); color: var(--color-text-muted); max-width: 44ch; }
+  .openings-dot { flex: none; align-self: flex-start; margin-top: 0.4em; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); }
 </style>

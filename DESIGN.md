@@ -11,6 +11,7 @@ colors:
   white: "#ffffff"
   ink-muted: "#5b5f67"
   night-muted: "#afb8c0"
+  mist: "#e7e8e9"
 typography:
   display:
     fontFamily: "Manrope Variable, system-ui, sans-serif"
@@ -127,7 +128,8 @@ Seis colores de marca extraídos del logo, sin colores ajenos a la identidad. El
 - **Ink Muted** (`ink-muted`): texto secundario sobre mineral (5.98:1). Es titanium oscurecido para tamaños de lectura.
 - **Night Muted** (`night-muted`): texto secundario sobre navy (7.76:1); se obtiene como mezcla de mineral al 70 % con navy.
 - **Titanium Grey** (`titanium-grey`): nodos, metadatos grandes (≥ 24 px, o 18.66 px en negrita; 4.25:1) y bordes de controles de formulario (≥ 3:1, WCAG 1.4.11).
-- **Graphite** (`graphite`): reservado. Es el punto negro del isotipo. Sobre navy da 1.02:1, así que es invisible.
+- **Graphite** (`graphite`): punto negro del isotipo y, desde V2, **superficie cinematográfica** de la sección Tecnología (mineral 14.9:1, amarillo 8.5:1; rojo 2.4:1, así que no se usa para texto). Sobre navy da 1.02:1.
+- **Mist** (`mist`): superficie intermedia (mineral al 88 % + titanio). Navy 12.7:1, Ink Muted 5.2:1.
 - **Hairline:** navy al 14 % sobre claro y mineral al 18 % sobre navy. Solo para divisores decorativos.
 
 ### Contraste verificado (WCAG 2.x)
@@ -146,6 +148,9 @@ Seis colores de marca extraídos del logo, sin colores ajenos a la identidad. El
 | Red / navy | 2.39 | Solo gráfico |
 | White / red | 6.53 | Texto sobre rojo |
 
+### Superficies (V2, docs/14 §4)
+Cuatro superficies con intención narrativa: **mineral** (luz), **mist** (intermedia), **navy** (quirófano) y **grafito** (cinematográfica). Cada sección declara `data-surface` y una clase `.surface-*` que reasigna los tokens semánticos. Las transiciones entre superficies son bandas halftone (claro ↔ oscuro), degradados (oscuro ↔ oscuro) y una regla técnica (claro ↔ mist).
+
 ### Named Rules
 
 **The Surface Swap Rule.** El acento depende de la superficie: rojo sobre mineral, amarillo sobre navy. Los componentes nunca eligen el color directamente: usan `--color-accent` y `--color-focus`, que `.surface-inverse` reasigna.
@@ -161,7 +166,10 @@ Seis colores de marca extraídos del logo, sin colores ajenos a la identidad. El
 
 **Character:** una sola familia geométrica y técnica trabajada por contraste de peso y tamaño. El display a peso 300, enorme y con tracking cerrado, da la voz editorial. El texto a 400 aporta claridad. El 600 con cifras tabulares sirve para los datos.
 
-### Hierarchy
+### Roles (V2, D-040)
+Seis roles y ningún tamaño por sección: `.t-display` (hero, 300), `.t-title` (h2, 2.25–4 rem, 400), `.t-subtitle` (elementos equivalentes como las tres especialidades, 1.75–3 rem, 400), `.t-lead` (frase de contexto, 1.125–1.375 rem), body y `.t-meta` (14 px, 600: etiquetas, pies de imagen, botones). El tamaño mínimo de cualquier texto es 14 px.
+
+### Hierarchy (V1, referencia)
 - **Display** (300, `--step-5`, 0.98, −0.04em; máximo 6 rem): una sola frase por página, la del hero («La precisión lo cambia todo.»). Clase `.display`.
 - **Headline** (600, `--step-4`, 1.08, −0.035em): `h1` de páginas interiores.
 - **Title** (600, `--step-3` / `--step-2`): `h2` de capítulo y `h3` de bloque.
@@ -235,7 +243,9 @@ Los componentes consumen solo tokens semánticos (`--color-*`, `--space-*`, `--d
 - **Favicon:** a 16 px el isotipo pierde legibilidad y en pestañas oscuras las órbitas navy desaparecen. Son limitaciones del activo aprobado y se documentan, no se corrigen redibujando.
 - **Calidad del activo:** el canal alpha de `new-logo.png` tiene píxeles casi transparentes dispersos por el lienzo (polvo de recorte). Es invisible sobre fondos claros, pero cualquier tratamiento que amplifique el alpha lo haría visible.
 
-### Navigation (`src/components/SiteHeader.astro`)
+### Navigation (`src/components/SiteHeader.astro`, V2: D-041)
+Transparente en el hero con el logo completo; al hacer scroll, **pastilla flotante**: navy sobre superficies claras y mineral sobre oscuras (tono detectado con IntersectionObserver). El isotipo siempre va sobre un disco mineral. La descripción de V1 sigue a continuación como referencia.
+
 Barra fija de `--header-h` (4 rem) con el isotipo. En la home y en escritorio arranca en estado **top**: transparente sobre el hero y con el logo completo a 136 px. A partir de 48 px de scroll pasa a **compact**: superficie sólida, línea fina e isotipo. La sección activa se marca con un punto en `--color-accent` («estás aquí»). Por debajo de 64 em, botón «Menú» que abre un `<dialog>` modal (Esc y clic en el fondo cierran; el foco vuelve al botón) con enlaces a peso 300. El CTA «Solicitar cotización» está siempre visible, salvo por debajo de 376 px.
 
 ### Precision Field (signature, `src/lab/f05-precision-field.ts`)
@@ -247,7 +257,9 @@ Momento B: superficie navy con dos tramas halftone en CSS enmascaradas por un gr
 ### Halftone estático (previsto)
 Divisores, hover de tarjetas y footer. Patrón CSS de puntos cuya densidad se controla con variables. No usa canvas.
 
-### Inputs / Fields (formulario de cotización)
+### Inputs / Fields (V2, D-046: un sistema para todos los formularios)
+Campos de 52 px con etiqueta visible y texto de ayuda; foco con borde de texto y anillo de acento al 28 %; casilla, select y selector de archivo (zona punteada que nombra el archivo) propios; errores en línea con un punto de acento. Estado de recepción honesto: «completa, sin enviar». Referencia V1:
+
 Borde de 1 px en `--color-border-control`, radio de 2 px, fondo `--color-surface-raised`, altura mínima de 48 px y etiqueta visible siempre. El error aparece en línea, en rojo, con `aria-invalid`; al enviar, el foco va al primer error. Una vez marcado, el error se revalida con `input`/`change`, nunca con `blur` (D-028).
 
 ### Pending

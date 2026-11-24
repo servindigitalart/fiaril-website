@@ -105,7 +105,7 @@
   --press-scale: 0.97;
 
   /* ---------- Chrome ---------- */
-  --header-h: 4rem;
+  --header-h: 4.25rem; /* floating pill: 3.5rem + 10px offset */
 }
 
 @media (min-width: 40em) { :root { --grid-columns: 6; } }
@@ -129,6 +129,31 @@
   background: var(--color-surface);
   color: var(--color-text);
 }
+
+/* ---------- V2 surfaces (docs/14 §4). Sections declare one; components adapt. ---------- */
+.surface-navy, .surface-graphite {
+  --color-surface-raised: color-mix(in srgb, var(--mineral) 7%, var(--color-surface));
+  --color-text: var(--mineral);
+  --color-text-muted: color-mix(in srgb, var(--mineral) 70%, var(--color-surface));
+  --color-border: color-mix(in srgb, var(--mineral) 16%, transparent);
+  --color-border-control: color-mix(in srgb, var(--mineral) 58%, var(--color-surface));
+  --color-primary: var(--mineral);
+  --color-on-primary: var(--color-surface);
+  --color-accent: var(--energy-yellow);   /* red is 2.4:1 on both dark surfaces */
+  --color-focus: var(--energy-yellow);
+  --color-secondary: var(--color-text-muted);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.surface-navy { --color-surface: var(--orbital-navy); }
+.surface-graphite { --color-surface: var(--graphite); }        /* mineral 14.9:1, muted 7.5:1 */
+.surface-mist {
+  --color-surface: color-mix(in srgb, var(--mineral) 88%, var(--titanium-grey)); /* #E7E8E9: navy 12.7:1, muted 5.2:1 */
+  --color-surface-raised: var(--white);
+  background: var(--color-surface);
+}
+.surface-mineral { background: var(--color-surface); }
+:is(.surface-navy, .surface-graphite) ::selection { background: var(--energy-yellow); color: var(--orbital-navy); }
 
 /* =========================== 3. Base =========================== */
 
@@ -232,6 +257,158 @@ img, canvas { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] { transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out); transition-delay: calc(var(--i, 0) * 70ms); }
   .js [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(14px); }
+}
+
+/* ===================== V2 type roles (docs/14 §3) =====================
+   Six roles. Components use these classes; no per-section font sizes. */
+:root {
+  --type-title: clamp(2.25rem, 1.55rem + 2.6vw, 4rem);
+  --type-subtitle: clamp(1.75rem, 1.35rem + 1.6vw, 3rem);
+  --type-lead: clamp(1.125rem, 1.03rem + 0.4vw, 1.375rem);
+  --type-meta: 0.875rem;
+}
+.t-display { font-size: var(--step-5); font-weight: var(--weight-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); }
+.t-title { font-size: var(--type-title); font-weight: var(--weight-body); line-height: 1.04; letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+.t-subtitle { font-size: var(--type-subtitle); font-weight: var(--weight-body); line-height: 1.08; letter-spacing: -0.025em; margin: 0; text-wrap: balance; }
+.t-lead { font-size: var(--type-lead); line-height: 1.5; color: var(--color-text-muted); max-width: 40ch; margin: 0; }
+.t-meta { font-size: var(--type-meta); font-weight: var(--weight-heading); line-height: 1.4; color: var(--color-text-muted); margin: 0; letter-spacing: 0.005em; }
+.btn { font-size: var(--type-meta); }
+
+/* Section head: title + one sentence of context, same rhythm everywhere */
+.section-head { display: grid; gap: var(--space-s); margin-bottom: var(--space-l); }
+@media (min-width: 64em) {
+  .section-head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-items: end; }
+}
+
+/* ===================== Chapter transitions (docs/14 §5) ===================== */
+.chapter { position: relative; }
+/* light -> dark: a halftone screen of the next (dark) surface closes into solid */
+.band-into {
+  position: relative; height: clamp(4rem, 3rem + 5vw, 8rem); margin-bottom: -1px;
+  background: radial-gradient(circle, var(--band, var(--orbital-navy)) 46%, transparent 50%) 0 0 / 12px 12px;
+  -webkit-mask-image: linear-gradient(transparent, #000); mask-image: linear-gradient(transparent, #000);
+}
+.band-into::after { content: ''; position: absolute; inset: 55% 0 0; background: linear-gradient(transparent, var(--band, var(--orbital-navy))); }
+.band-out {
+  position: relative; height: clamp(4rem, 3rem + 5vw, 8rem); margin-top: -1px;
+  background: radial-gradient(circle, var(--band, var(--orbital-navy)) 46%, transparent 50%) 0 0 / 12px 12px;
+  -webkit-mask-image: linear-gradient(#000, transparent); mask-image: linear-gradient(#000, transparent);
+}
+.band-out::before { content: ''; position: absolute; inset: 0 0 55%; background: linear-gradient(var(--band, var(--orbital-navy)), transparent); }
+/* dark -> dark: a change of light */
+.fade-between { height: clamp(5rem, 4rem + 6vw, 10rem); background: linear-gradient(var(--from), var(--to)); }
+/* light -> mist: a technical rule with ticks (drawing vocabulary, no numbers) */
+.ruler {
+  height: 14px; border-top: var(--border-width) solid var(--color-border-control);
+  background:
+    linear-gradient(90deg, var(--color-border-control) 1px, transparent 1px) 0 0 / 80px 14px,
+    linear-gradient(90deg, var(--color-border-control) 1px, transparent 1px) 0 0 / 16px 6px;
+  background-repeat: repeat-x; opacity: 0.6;
+}
+
+/* ===================== Figures ===================== */
+.figure { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); min-width: 0; } /* minmax(0): a loading image must never widen its column */
+.figure > :first-child { position: relative; overflow: clip; border-radius: var(--radius); }
+.figure img { width: 100%; height: 100%; object-fit: cover; }
+/* radiographs on dark surfaces: black becomes the surface, bone stays luminous */
+.xray img { mix-blend-mode: screen; filter: contrast(1.08); }
+.xray > :first-child { background: var(--color-surface); }
+.xray-plate > :first-child { background: var(--orbital-navy); }
+
+/* ===================== Motion (docs/14 §8) ===================== */
+@media (prefers-reduced-motion: no-preference) {
+  /* mask reveal for images */
+  .js [data-reveal='mask'] > :first-child { transition: clip-path 1000ms var(--ease-out), transform 1200ms var(--ease-out); }
+  .js [data-reveal='mask']:not(.is-in) > :first-child { clip-path: inset(14% 0 14% 0); transform: scale(1.06); }
+  .js [data-reveal='mask'] { opacity: 1 !important; transform: none !important; }
+  /* moderate parallax, native scroll-driven; browsers without support stay still */
+  @supports (animation-timeline: view()) {
+    .parallax { animation: drift linear both; animation-timeline: view(); animation-range: cover; }
+    @keyframes drift { from { translate: 0 7%; } to { translate: 0 -7%; } }
+  }
+}
+
+/* ===================== Forms (docs/14 §11): one system for every form ===================== */
+.form { display: grid; gap: var(--space-m) var(--space-s); align-content: start; }
+@media (min-width: 40em) { .form { grid-template-columns: 1fr 1fr; } .form .wide { grid-column: 1 / -1; } }
+.form .trap { position: absolute; left: -100vw; }
+.field { display: grid; gap: var(--space-2xs); align-content: start; }
+.field > label, .field > .field-label { font-size: var(--type-meta); font-weight: var(--weight-heading); }
+.field .optional { font-weight: var(--weight-body); color: var(--color-text-muted); }
+.field .help { font-size: var(--type-meta); color: var(--color-text-muted); margin: 0; }
+.field :is(input:not([type='checkbox']):not([type='file']), select, textarea) {
+  width: 100%; min-height: 52px; padding: 0.8em 0.95em;
+  font: inherit; color: var(--color-text); background-color: var(--color-surface-raised);
+  border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius);
+  box-shadow: 0 0 0 0 transparent;
+  transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out);
+}
+.field textarea { resize: vertical; min-height: 8.5rem; line-height: 1.5; }
+.field select {
+  appearance: none; padding-right: 2.75em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2372767f' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 1em center;
+}
+.field ::placeholder { color: var(--color-text-muted); opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .field :is(input, select, textarea):not(:focus):hover { border-color: var(--color-text-muted); }
+}
+.field :is(input, select, textarea):focus-visible {
+  outline: none; border-color: var(--color-text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 28%, transparent);
+}
+.field [aria-invalid] { border-color: var(--color-accent) !important; }
+.field :disabled { opacity: 0.55; cursor: not-allowed; }
+.error { display: flex; gap: 0.45em; align-items: baseline; margin: 0; font-size: var(--type-meta); font-weight: var(--weight-ui); color: var(--color-accent); }
+.error::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; transform: translateY(-1px); }
+.error:empty { display: none; }
+
+/* custom checkbox */
+.check { grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-xs); }
+.check input {
+  appearance: none; width: 22px; height: 22px; margin: 0; flex: none; cursor: pointer;
+  border: var(--border-width) solid var(--color-border-control); border-radius: 4px; background: var(--color-surface-raised);
+  display: grid; place-content: center; transition: background-color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out);
+}
+.check input::after {
+  content: ''; width: 11px; height: 6px; border: solid var(--color-on-primary); border-width: 0 0 2px 2px;
+  transform: rotate(-45deg) translate(1px, -1px) scale(0); transition: transform var(--dur-ui) var(--ease-out);
+}
+.check input:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.check input:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+.check input:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: 2px; }
+.check label { font-weight: var(--weight-body); font-size: var(--step-0); cursor: pointer; }
+.check .error { grid-column: 1 / -1; }
+
+/* custom file field: a drop zone that names the chosen file */
+.file { position: relative; }
+.file input[type='file'] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.file-zone {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs) var(--space-s); min-height: 64px; padding: 0.8em 1em;
+  border: var(--border-width) dashed var(--color-border-control); border-radius: var(--radius); background: var(--color-surface-raised);
+  transition: border-color var(--dur-hover) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out);
+}
+.file-zone .file-button { font-size: var(--type-meta); font-weight: var(--weight-ui); padding: 0.55em 1em; border-radius: var(--radius-pill); border: var(--border-width) solid var(--color-text); }
+.file-zone .file-name { font-size: var(--type-meta); color: var(--color-text-muted); }
+.file input:focus-visible + .file-zone { border-color: var(--color-text); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 28%, transparent); }
+.file input[aria-invalid] + .file-zone { border-color: var(--color-accent); }
+@media (hover: hover) and (pointer: fine) { .file:hover .file-zone { border-color: var(--color-text-muted); } }
+
+.submit-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-s); }
+.reception { display: flex; align-items: baseline; gap: 0.6em; margin: 0; font-size: var(--type-meta); color: var(--color-text-muted); }
+.reception-dot { flex: none; align-self: flex-start; margin-top: 0.4em; width: 8px; height: 8px; border-radius: 50%; background: var(--energy-yellow); box-shadow: 0 0 0 3px color-mix(in srgb, var(--energy-yellow) 25%, transparent); }
+.status:empty { display: none; }
+.status { font-size: var(--type-meta); font-weight: var(--weight-ui); outline-offset: 4px; }
+.status p { margin: 0; max-width: 60ch; }
+.status[data-state='pending'] {
+  display: grid; gap: var(--space-2xs); padding: var(--space-s) var(--space-m);
+  border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius); background: var(--color-surface-raised);
+  font-weight: var(--weight-body); color: var(--color-text-muted);
+}
+.status .status-title { font-weight: var(--weight-heading); color: var(--color-text); }
+@media (prefers-reduced-motion: no-preference) {
+  .status[data-state='pending'] { animation: status-in var(--dur-panel) var(--ease-out); }
+  @keyframes status-in { from { opacity: 0; transform: translateY(6px); } }
 }
 
 @media (prefers-reduced-motion: reduce) {
