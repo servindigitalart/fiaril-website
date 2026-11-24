@@ -1,0 +1,245 @@
+---
+// Temporary page served on the official domain (netlify/edge-functions/domain-gate.ts).
+// Self-contained on purpose: inline CSS/JS and assets under /maintenance/, so the official
+// domain never needs anything from /_astro/ (the development site's bundles).
+// Token values mirror src/styles/global.css (.surface-inverse); keep them in sync.
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>FIARIL Orthopedics</title>
+    <meta name="description" content="Un nuevo espacio para FIARIL está tomando forma." />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#07253f" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/maintenance/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/maintenance/apple-touch-icon.png" />
+    <link rel="preload" href="/maintenance/manrope-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <style is:inline>
+      @font-face {
+        font-family: 'Manrope Variable';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 800;
+        src: url(/maintenance/manrope-latin.woff2) format('woff2-variations');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      :root {
+        --navy: #07253f;
+        --mineral: #f7f7f7;
+        --yellow: #f3b234;
+        --text-muted: #afb8c0;   /* mineral 70% over navy: 7.8:1 */
+        --border-control: #a1abb4; /* mineral 60% over navy: 6.1:1 */
+        --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+        --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        --dur-hover: 160ms;
+        --dur-press: 120ms;
+        --dur-reveal: 600ms;
+        color-scheme: dark;
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; background: var(--navy); }
+      body {
+        margin: 0;
+        background: var(--navy);
+        color: var(--mineral);
+        font-family: 'Manrope Variable', system-ui, sans-serif;
+        font-feature-settings: 'ss01';
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .stage {
+        position: relative;
+        min-height: 100svh;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: 2rem;
+        padding: max(var(--gutter), env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right)) max(var(--gutter), env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+        overflow: clip;
+      }
+      canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.6s var(--ease-out); }
+      canvas.on { opacity: 1; }
+      .content, .foot { position: relative; z-index: 1; }
+      .content { align-self: start; padding-top: clamp(0.5rem, 4vh, 3rem); }
+
+      /* The logo has no negative version (DESIGN.md, D-018): it sits on a mineral plate. */
+      .plate { display: inline-block; margin: 0; padding: clamp(14px, 1.6vw, 22px); background: var(--mineral); border-radius: 2px; }
+      .plate img { display: block; height: clamp(136px, 17vh, 184px); width: auto; }
+
+      h1 {
+        margin: clamp(2rem, 7vh, 4.5rem) 0 0;
+        max-width: 11ch;
+        font-size: clamp(2.6rem, 1.3rem + 4.8vw, 6.25rem);
+        font-weight: 300;
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+        text-wrap: balance;
+      }
+      @media (max-height: 520px) and (orientation: landscape) {
+        h1 { margin-top: 1.25rem; max-width: none; font-size: clamp(2rem, 1rem + 4vh, 3rem); }
+      }
+      .lede { margin: clamp(1rem, 2.5vh, 1.5rem) 0 0; max-width: 30ch; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); line-height: 1.45; color: var(--text-muted); text-wrap: pretty; }
+
+      .foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+      .signature { margin: 0; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--yellow); } /* 8.35:1 */
+
+      .pause {
+        min-height: 44px; padding: 0 1.1em;
+        font: 500 0.8125rem / 1 'Manrope Variable', system-ui, sans-serif; letter-spacing: 0.04em;
+        color: var(--mineral); background: transparent;
+        border: 1px solid var(--border-control); border-radius: 999px;
+        cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+        transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
+      }
+      .pause:active { transform: scale(0.97); }
+      .pause:focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
+      @media (hover: hover) and (pointer: fine) { .pause:hover { background: var(--mineral); color: var(--navy); } }
+
+      /* One orchestrated entrance; nothing else animates in the interface. */
+      .rise { animation: rise var(--dur-reveal) var(--ease-out) both; animation-delay: calc(var(--i) * 90ms + 150ms); }
+      @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rise { animation: none; }
+        canvas { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <canvas aria-hidden="true"></canvas>
+      <div class="content">
+        <figure class="plate rise" style="--i: 0">
+          <img src="/maintenance/logo.webp" width="510" height="440" alt="FIARIL Orthopedics" fetchpriority="high" />
+        </figure>
+        <h1 class="rise" style="--i: 1">Estamos afinando cada detalle.</h1>
+        <p class="lede rise" style="--i: 2">Un nuevo espacio para FIARIL está tomando forma.</p>
+      </div>
+      <div class="foot rise" style="--i: 3">
+        <p class="signature" translate="no">Ortopedia en movimiento.</p>
+        <button class="pause" type="button" hidden>Pausar animación</button>
+      </div>
+    </main>
+
+    <script is:inline>
+      // A halftone plane in perspective crossed by slow ripples. Ripple sources travel on tilted
+      // ellipses (the isotype's orbits). Autonomous: no cursor dependency. Capped at 30 fps,
+      // stops when the tab is hidden, single static frame under reduced motion.
+      (() => {
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext && canvas.getContext('2d');
+        if (!ctx) return;
+        const content = document.querySelector('.content');
+        const button = document.querySelector('.pause');
+        const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const SOURCES = [
+          { a: 1.1, b: 0.9, z: 2.0, speed: 0.07, phase: 0 },
+          { a: 1.6, b: 0.7, z: 2.6, speed: -0.05, phase: 2.1 },
+        ];
+        let w = 0, h = 0, horizon = 0, k = 0, rows = [], holes = [], raf = 0, last = 0, t = 0, paused = false;
+        const FEATHER = 72;
+        // 0 inside a text box → 1 at FEATHER px away: halftone logic, the field thins out instead of being cut
+        const clearance = (x, y) => {
+          let m = 1;
+          for (const [l, t2, r2, b] of holes) {
+            const d = Math.hypot(Math.max(l - x, 0, x - r2), Math.max(t2 - y, 0, y - b));
+            if (d < FEATHER) m = Math.min(m, d / FEATHER);
+          }
+          return m;
+        };
+
+        const layout = () => {
+          const r = canvas.getBoundingClientRect();
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          w = r.width; h = r.height;
+          canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          // text never sits on the moving field: dots shrink to nothing around every text box
+          holes = [...document.querySelectorAll('.plate, h1, .lede, .signature, .pause')].map((el) => {
+            const b = el.getBoundingClientRect();
+            return [b.left - r.left - 12, b.top - r.top - 12, b.right - r.left + 12, b.bottom - r.top + 12];
+          });
+          // wide screens: the plane fills the lower two thirds beside the text column;
+          // narrow screens: the plane starts below the text block
+          const textBottom = content.getBoundingClientRect().bottom - r.top;
+          const wide = document.querySelector('h1').getBoundingClientRect().right < w * 0.6;
+          horizon = wide ? h * 0.34 : Math.min(Math.max(textBottom + 24, h * 0.5), h - 96);
+          k = h - horizon;
+          // rows spaced geometrically in depth (z = 1 nearest … 3.4 farthest)
+          rows = [];
+          const step = Math.max(0.035, 15 / k), gap = Math.max(18, w / 70) / k;
+          for (let z = 1; z < 3.4; z *= 1 + step) {
+            const half = ((w / 2) / k) * z + gap;
+            const xs = [];
+            for (let x = -half; x <= half; x += gap) xs.push(x);
+            rows.unshift({ z, xs }); // far rows first: near dots paint on top
+          }
+          draw();
+        };
+
+        const height = (x, z) => {
+          let v = 0.35 * Math.sin(x * 0.9 + z * 1.6 - t * 0.45);
+          for (const s of SOURCES) {
+            const th = s.phase + t * s.speed;
+            const sx = Math.cos(th) * s.a, sz = s.z + Math.sin(th) * s.b * 0.6;
+            const d = Math.hypot(x - sx, (z - sz) * 1.4);
+            v += Math.sin(d * 7 - t * 0.9) * Math.exp(-d * 0.9);
+          }
+          return v; // ≈ −1.4 … 1.4
+        };
+
+        const draw = () => {
+          ctx.fillStyle = '#07253f';
+          ctx.fillRect(0, 0, w, h);
+          const cx = w / 2;
+          const crest = new Path2D();
+          for (const { z, xs } of rows) {
+            const fog = Math.min(1, (3.4 - z) / 1.6); // dissolve toward the horizon
+            ctx.fillStyle = `rgba(247,247,247,${(0.07 + 0.5 * fog * fog).toFixed(3)})`;
+            ctx.beginPath();
+            const scale = k / z;
+            for (const x of xs) {
+              const v = height(x, z);
+              const sx = cx + x * scale;
+              if (sx < -4 || sx > w + 4) continue;
+              const sy = horizon + scale * (1 - v * 0.05);
+              const r = (0.5 + 0.5 * Math.max(0, v + 0.6)) * (2.6 / z) * clearance(sx, sy);
+              if (r < 0.25) continue;
+              if (v > 1.05 && z < 2.6) { crest.moveTo(sx + r, sy); crest.arc(sx, sy, r, 0, 6.2832); continue; }
+              ctx.moveTo(sx + r, sy); ctx.arc(sx, sy, r, 0, 6.2832);
+            }
+            ctx.fill();
+          }
+          ctx.fillStyle = 'rgba(243,178,52,0.85)';
+          ctx.fill(crest);
+        };
+
+        const frame = (now) => {
+          raf = requestAnimationFrame(frame);
+          if (now - last < 33) return; // 30 fps is plenty for slow waves
+          t += Math.min((now - last) / 1000, 0.1);
+          last = now;
+          draw();
+        };
+        const start = () => { if (!raf && !paused && !still && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
+        const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+
+        t = still ? 6 : 0;
+        new ResizeObserver(layout).observe(canvas);
+        document.fonts.ready.then(layout); // text height changes once Manrope arrives
+        canvas.classList.add('on');
+        if (still) return;
+        button.hidden = false;
+        button.addEventListener('click', () => {
+          paused = !paused;
+          button.textContent = paused ? 'Reanudar animación' : 'Pausar animación';
+          paused ? stop() : start();
+        });
+        document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+        start();
+      })();
+    </script>
+  </body>
+</html>
