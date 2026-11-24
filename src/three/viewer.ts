@@ -2,13 +2,13 @@
 // Choreography: the camera stays still; the object travels a slow lemniscate (Gerono figure-eight)
 // with a little depth, and its orientation follows the path tangent — a product being presented,
 // not a spinning toy. Cursor tilt and touch drag are added on top with damping.
-// No visible pause control (D-049). Internally: one rAF loop only while visible and the tab is shown;
-// reduced motion = a static pose that still answers to manual drag.
+// D-049 (resolved, D-055): a discreet pause control drives setPaused(). Internally: one rAF loop only while
+// visible, shown and not paused; reduced motion = a static pose. Paused or still, manual drag still renders.
 import { Box3, Group, Vector3 } from 'three';
 import { createStudio, frame, wireframe } from './studio';
 import { materials, MODELS, type ModelName } from './models';
 
-export interface Viewer { animated: boolean; show(name: ModelName): void; setWire(on: boolean): void }
+export interface Viewer { animated: boolean; show(name: ModelName): void; setWire(on: boolean): void; setPaused(p: boolean): void }
 
 const PERIOD = 20; // seconds per figure-eight
 
@@ -24,7 +24,7 @@ export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): View
   const pivot = new Group(); // orientation (path tangent + cursor + drag)
   orbit.add(pivot); scene.add(orbit);
   const size = new Vector3();
-  let current: Group | null = null, wire = false, visible = false, raf = 0, last = 0, t = 0, amp = 0.1;
+  let current: Group | null = null, wire = false, paused = false, visible = false, raf = 0, last = 0, t = 0, amp = 0.1;
   let tiltX = 0, tiltY = 0, targetX = 0, targetY = 0, drag = 0, dragV = 0, dragFrom = 0, dragging = false;
 
   const pose = () => {
@@ -54,7 +54,7 @@ export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): View
     pose(); render();
     raf = requestAnimationFrame(loop);
   };
-  const start = () => { if (!raf && visible && !still && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } };
+  const start = () => { if (!raf && visible && !still && !paused && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } };
   const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
   canvas.addEventListener('pointermove', (e) => {
@@ -64,7 +64,7 @@ export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): View
     } else if (dragging) {
       const dx = (e.clientX - dragFrom) * 0.012; dragFrom = e.clientX;
       drag += dx; dragV = dx * 30;
-      if (still) { pose(); render(); }
+      if (still || paused) { pose(); render(); }
     }
   });
   // touch-action: pan-y keeps vertical scrolling native; only horizontal drags reach us
@@ -94,6 +94,7 @@ export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): View
       fit();
     },
     setWire(on) { wire = on; if (current) wireframe(current, on); render(); },
+    setPaused(p) { paused = p; p ? stop() : start(); },
   };
   viewer.show(initial);
   canvas.closest('.viewer')?.classList.add('is-live');

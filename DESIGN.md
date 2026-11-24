@@ -278,7 +278,7 @@ Contorno rojo discontinuo (`.pending`) en todo contenido provisional. Es visible
 - **Do** usar `--color-accent` y `--color-focus` en lugar de rojo o amarillo directos, para que la superficie decida (The Surface Swap Rule).
 - **Do** reservar `.display` para una sola frase por página.
 - **Do** apoyar todo texto sobre un plano sólido de la superficie.
-- **Do** dar a cada animación autónoma de más de 5 s un control de pausa y un estado estático. Excepción del cliente (D-049): el visor 3D y el campo de Acompañamiento no muestran pausa; mantienen el estado estático con movimiento reducido y se detienen fuera de pantalla.
+- **Do** dar a cada animación autónoma de más de 5 s un control de pausa y un estado estático. Para el visor 3D y el campo de Acompañamiento, el control es discreto: un icono de 44 px en la esquina, con anillo de acento cuando está en pausa (D-055).
 - **Do** marcar con `.pending` todo dato no confirmado por FIARIL.
 - **Do** mostrar el logo solo sobre superficies claras y a una altura de contenido de al menos unos 136 px; por debajo, el isotipo.
 

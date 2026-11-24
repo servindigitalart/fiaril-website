@@ -33,7 +33,7 @@ Una sola geometría (barra de 64 px). El cambio es de color y de logo: el logo c
 - Cámara fija.
 - Sin asignaciones por frame.
 - Encuadre al 84 % para que la pieza nunca salga del marco durante la órbita.
-- Sin botón de pausa (D-049).
+- Control de pausa discreto (D-055, que resuelve D-049).
 
 ## Formularios
 
@@ -56,7 +56,7 @@ Distintivo desactivado en la configuración del sitio mediante la API de Netlify
 | Rutas (12) en 6 tamaños | ✅ Sin desbordamiento ni errores; favicon, OG y descripción en todas |
 | Accesibilidad (axe, WCAG 2.2 AA) a 1440 y 390 px | ✅ 0 violaciones |
 | Header | ✅ Misma geometría en top, ink y paper; CLS de 0.0013 |
-| 3D | ✅ Three.js no se descarga al cargar; 0 botones de pausa; se mueve (3.9 % de píxeles en 1.5 s); el arrastre táctil gira (6.2 %); estático con movimiento reducido (0 rAF); 60 fps |
+| 3D | ✅ Three.js no se descarga al cargar; control de pausa discreto (D-055); se mueve (3.9 % de píxeles en 1.5 s); el arrastre táctil gira (6.2 %); estático con movimiento reducido (0 rAF); 60 fps |
 | Campo de Acompañamiento | ✅ Movimiento ambiental (0.95 %); 60 fps; estático con movimiento reducido |
 | Formularios | ✅ Preselección por URL; errores y foco; correo inválido; PDF inválido; más de 5 MB; quitar archivo; estados «sin enviar»; **0 peticiones de envío, 0 almacenamiento, 0 formularios registrados** |
 | Firefox 131 y WebKit 18 | ✅ Home, 3D, header de 64 px, páginas nuevas y validación |

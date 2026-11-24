@@ -97,6 +97,7 @@ const lines = [
           <div class="viewer-stage">
             <Picture class="viewer-fallback" src={hipRender} alt="" formats={['avif', 'webp']} widths={[420, 720]} sizes="(min-width: 64em) 40vw, 80vw" loading="lazy" />
             <canvas class="viewer-canvas" role="img" aria-label="Visualización 3D conceptual de una prótesis de cadera."></canvas>
+            <button class="motion-toggle" type="button" data-label-pause="Pausar el movimiento de la visualización 3D" data-label-play="Reanudar el movimiento de la visualización 3D" aria-label="Pausar el movimiento de la visualización 3D" hidden><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="0.8"/><rect x="9.4" y="3" width="2.6" height="10" rx="0.8"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.2 3.1v9.8c0 .5.5.8.9.5l7.5-4.9a.6.6 0 0 0 0-1L6.1 2.6c-.4-.3-.9 0-.9.5z"/></svg></button>
           </div>
           <div class="viewer-controls">
             <div class="seg" role="group" aria-label="Modelo">
@@ -121,6 +122,7 @@ const lines = [
 
   <section id="acompanamiento" class="surface-navy section care" data-surface="navy" aria-labelledby="care-title">
     <canvas class="care-field" aria-hidden="true"></canvas>
+    <button class="motion-toggle care-toggle" type="button" data-label-pause="Pausar la animación del fondo" data-label-play="Reanudar la animación del fondo" aria-label="Pausar la animación del fondo" hidden><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="0.8"/><rect x="9.4" y="3" width="2.6" height="10" rx="0.8"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.2 3.1v9.8c0 .5.5.8.9.5l7.5-4.9a.6.6 0 0 0 0-1L6.1 2.6c-.4-.3-.9 0-.9.5z"/></svg></button>
     <div class="wrap care-grid">
       <h2 id="care-title" class="t-title" data-reveal>En el quirófano, junto al equipo quirúrgico.</h2>
       <div class="care-body">
@@ -161,6 +163,19 @@ const lines = [
     toggle.addEventListener('click', () => { paused = !paused; control.setPaused(paused); toggle.textContent = paused ? 'Reanudar animación' : 'Pausar animación'; });
   }
 
+  // ---------- Discreet pause controls (D-055): icon state + accessible label; hidden when nothing moves ----------
+  function motionToggle(btn: HTMLButtonElement, control: { animated: boolean; setPaused(p: boolean): void }) {
+    if (!control.animated) return;
+    let paused = false;
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      paused = !paused;
+      control.setPaused(paused);
+      btn.toggleAttribute('data-paused', paused);
+      btn.setAttribute('aria-label', btn.dataset[paused ? 'labelPlay' : 'labelPause']!);
+    });
+  }
+
   // ---------- Reveals (text: fade; images: mask) ----------
   const reveal = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); reveal.unobserve(e.target); }
@@ -176,6 +191,7 @@ const lines = [
     const vcanvas = viewerEl.querySelector<HTMLCanvasElement>('.viewer-canvas')!;
     const viewer = mountViewer(vcanvas, 'hip');
     if (!viewer) return; // no WebGL: the static render stays
+    motionToggle(viewerEl.querySelector<HTMLButtonElement>('.motion-toggle')!, viewer);
     const names = { hip: 'una prótesis de cadera', plate: 'una placa de fijación con tornillos' } as const;
     const press = (group: string, btn: HTMLButtonElement) => viewerEl.querySelectorAll<HTMLButtonElement>(`[${group}]`).forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
     viewerEl.querySelectorAll<HTMLButtonElement>('[data-model]').forEach((b) => b.addEventListener('click', () => {
@@ -195,6 +211,7 @@ const lines = [
     return [r.left - c.left, r.top - c.top, r.right - c.left, r.bottom - c.top] as [number, number, number, number];
   }));
   document.fonts.ready.then(() => lamp.refresh());
+  motionToggle(care.querySelector<HTMLButtonElement>('.care-toggle')!, lamp);
 </script>
 
 <style>
@@ -298,6 +315,25 @@ const lines = [
   @media (hover: hover) and (pointer: fine) { .seg button[aria-pressed='false']:hover { color: var(--color-text); } }
   .tech-frame { aspect-ratio: 3 / 5; max-height: 70svh; }
   .tech-xray { width: min(100%, 24rem); justify-self: center; }
+
+  /* ============ Discreet motion controls (D-055) ============ */
+  .motion-toggle {
+    position: absolute; right: var(--space-s); bottom: var(--space-s); z-index: 2;
+    display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%;
+    border: var(--border-width) solid var(--color-border); color: var(--color-text);
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    cursor: pointer; touch-action: manipulation; opacity: 0.72;
+    transition: opacity var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out);
+  }
+  .motion-toggle svg { width: 14px; height: 14px; fill: currentColor; }
+  .motion-toggle .i-play, .motion-toggle[data-paused] .i-pause { display: none; }
+  .motion-toggle[data-paused] .i-play { display: block; }
+  /* paused is a state worth seeing: full opacity and an accent ring */
+  .motion-toggle[data-paused] { opacity: 1; box-shadow: 0 0 0 2px var(--color-accent); }
+  .motion-toggle:focus-visible { opacity: 1; }
+  .motion-toggle:active { transform: scale(var(--press-scale)); }
+  @media (hover: hover) and (pointer: fine) { .motion-toggle:hover { opacity: 1; border-color: var(--color-text-muted); } }
+  .care-toggle { right: var(--gutter); bottom: var(--space-m); }
 
   /* ============ Acompañamiento (navy, surgical lamp) ============ */
   .care { position: relative; overflow: clip; display: grid; min-height: min(52rem, 88svh); }
