@@ -19,4 +19,9 @@ export const experiments = [
     note: 'Ecuación de onda amortiguada sobre la retícula: la estela del cursor inyecta energía, la perturbación se propaga y el campo recupera el equilibrio. Las crestas se tiñen de rojo.',
     try: 'Mueve el cursor rápido o toca. Gotas autónomas mantienen vivo el campo.',
   },
+  {
+    slug: 'f05-precision-field', code: 'F05', title: 'Precision Field', family: 'Raster Anatomy × Motion Studies',
+    note: 'Híbrido de F03 y F04 en un solo medio: la anatomía se ensambla desde las órbitas del isotipo y la onda la atraviesa. Las partículas se refractan con la pendiente del campo y se tiñen de rojo al paso de una cresta. Motor del hero.',
+    try: 'Mueve el cursor o toca. Los nodos de las órbitas emiten ondas por sí solos.',
+  },
 ] as const;

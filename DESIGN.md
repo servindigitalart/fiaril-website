@@ -14,10 +14,10 @@ colors:
 typography:
   display:
     fontFamily: "Manrope Variable, system-ui, sans-serif"
-    fontSize: "clamp(3rem, 1.6rem + 6vw, 7.5rem)"
+    fontSize: "clamp(2.75rem, 1.4rem + 5vw, 6rem)"
     fontWeight: 300
     lineHeight: 0.98
-    letterSpacing: "-0.045em"
+    letterSpacing: "-0.04em"
   headline:
     fontFamily: "Manrope Variable, system-ui, sans-serif"
     fontSize: "clamp(2.6rem, 1.9rem + 3.5vw, 5.25rem)"
@@ -162,14 +162,14 @@ Seis colores de marca extraídos del logo, sin colores ajenos a la identidad. El
 **Character:** una sola familia geométrica y técnica trabajada por contraste de peso y tamaño. El display a peso 300, enorme y con tracking cerrado, da la voz editorial. El texto a 400 aporta claridad. El 600 con cifras tabulares sirve para los datos.
 
 ### Hierarchy
-- **Display** (300, `--step-5`, 0.98, −0.045em): una sola frase por página, la del hero («La precisión lo cambia todo.»). Clase `.display`.
+- **Display** (300, `--step-5`, 0.98, −0.04em; máximo 6 rem): una sola frase por página, la del hero («La precisión lo cambia todo.»). Clase `.display`.
 - **Headline** (600, `--step-4`, 1.08, −0.035em): `h1` de páginas interiores.
 - **Title** (600, `--step-3` / `--step-2`): `h2` de capítulo y `h3` de bloque.
 - **Body** (400, `--step-0`, 1.6): medida máxima de 62ch; `text-wrap: pretty`.
 - **UI** (500, `--step--1`, +0.04em): botones y navegación.
 - **Label** (600, `--step--1`, +0.12em, mayúsculas, cifras tabulares): **solo datos técnicos reales**, como referencias, códigos, medidas y coordenadas.
 
-Escala fluida con `clamp()` y sin saltos por breakpoint. Pasos: −1 (0.8–0.875 rem) · 0 (1–1.125) · 1 (1.25–1.5) · 2 (1.6–2.25) · 3 (2.1–3.5) · 4 (2.6–5.25) · 5 (3–7.5).
+Escala fluida con `clamp()` y sin saltos por breakpoint. Pasos: −1 (0.8–0.875 rem) · 0 (1–1.125) · 1 (1.25–1.5) · 2 (1.6–2.25) · 3 (2.1–3.5) · 4 (2.6–5.25) · 5 (2.75–6). Tracking mínimo −0.04em (D-024).
 
 ### Named Rules
 
@@ -235,17 +235,20 @@ Los componentes consumen solo tokens semánticos (`--color-*`, `--space-*`, `--d
 - **Favicon:** a 16 px el isotipo pierde legibilidad y en pestañas oscuras las órbitas navy desaparecen. Son limitaciones del activo aprobado y se documentan, no se corrigen redibujando.
 - **Calidad del activo:** el canal alpha de `new-logo.png` tiene píxeles casi transparentes dispersos por el lienzo (polvo de recorte). Es invisible sobre fondos claros, pero cualquier tratamiento que amplifique el alpha lo haría visible.
 
-### Navigation (prevista, Fase 4)
-Barra integrada con el hero. Se oculta al bajar y reaparece al subir sobre superficie sólida con una línea fina. La sección activa se marca con un punto en `--color-accent`. En móvil, una hoja `<dialog>` con `--ease-drawer` y `--dur-panel` y acceso directo a contacto. Desplegables con disclosure accesible (`aria-expanded`, Esc) que no dependen del hover.
+### Navigation (`src/components/SiteHeader.astro`)
+Barra fija de `--header-h` (4 rem) con el isotipo. En la home y en escritorio arranca en estado **top**: transparente sobre el hero y con el logo completo a 136 px. A partir de 48 px de scroll pasa a **compact**: superficie sólida, línea fina e isotipo. La sección activa se marca con un punto en `--color-accent` («estás aquí»). Por debajo de 64 em, botón «Menú» que abre un `<dialog>` modal (Esc y clic en el fondo cierran; el foco vuelve al botón) con enlaces a peso 300. El CTA «Solicitar cotización» está siempre visible, salvo por debajo de 376 px.
 
-### FieldCanvas (signature, prevista, Fase 3)
-El campo F05, que une la anatomía de F03 con la onda de F04 en WebGL2, con respaldo en Canvas 2D. Tiene botón de pausa visible, usa un frame final estático con reduced-motion y la imagen no transmite información que no esté también en texto.
+### Precision Field (signature, `src/lab/f05-precision-field.ts`)
+El campo F05 del hero: la anatomía de F03 se ensambla desde las órbitas y la ecuación de onda de F04 la atraviesa. Las partículas se refractan con la pendiente, crecen en las crestas y pasan a rojo al paso de la onda. Una retícula tenue hace visible el campo y se aclara alrededor del texto (`holes`). La posición de la anatomía la decide CSS con `.hero-stage`. Botón de pausa visible, frame final estático con reduced-motion y canvas `aria-hidden`: la imagen no transmite nada que no esté en el texto. Implementado en Canvas 2D (D-025).
+
+### Lámpara quirúrgica (sección Acompañamiento técnico)
+Momento B: superficie navy con dos tramas halftone en CSS enmascaradas por un gradiente radial que sigue al cursor (`@property --lx/--ly`, 900 ms) solo con puntero fino. Fuera de la zona de texto. Sin canvas.
 
 ### Halftone estático (previsto)
 Divisores, hover de tarjetas y footer. Patrón CSS de puntos cuya densidad se controla con variables. No usa canvas.
 
-### Inputs / Fields (previstos, Fase 8)
-Borde de 1 px en `--color-border-control`, radio de 2 px, etiqueta visible siempre, error en línea junto al campo con el texto en rojo y el foco en el primer error.
+### Inputs / Fields (formulario de cotización)
+Borde de 1 px en `--color-border-control`, radio de 2 px, fondo `--color-surface-raised`, altura mínima de 48 px y etiqueta visible siempre. El error aparece en línea, en rojo, con `aria-invalid`; al enviar, el foco va al primer error. Una vez marcado, el error se revalida con `input`/`change`, nunca con `blur` (D-028).
 
 ### Pending
 Contorno rojo discontinuo (`.pending`) en todo contenido provisional. Es visible a propósito y no se publica en producción.

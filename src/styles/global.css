@@ -43,7 +43,7 @@
   --step-2: clamp(1.6rem, 1.4rem + 1vw, 2.25rem);
   --step-3: clamp(2.1rem, 1.7rem + 2vw, 3.5rem);
   --step-4: clamp(2.6rem, 1.9rem + 3.5vw, 5.25rem);
-  --step-5: clamp(3rem, 1.6rem + 6vw, 7.5rem);     /* display: hero statement only */
+  --step-5: clamp(2.75rem, 1.4rem + 5vw, 6rem);    /* display: hero statement only (craft floor: max 6rem) */
 
   --weight-display: 300;
   --weight-body: 400;
@@ -55,7 +55,7 @@
   --leading-heading: 1.08;
   --leading-body: 1.6;
 
-  --tracking-display: -0.045em;
+  --tracking-display: -0.04em;   /* craft floor: never tighter */
   --tracking-heading: -0.02em;
   --tracking-ui: 0.04em;
   --tracking-data: 0.12em;
@@ -103,6 +103,9 @@
   --dur-panel: 320ms;     /* menus, sheets, drawers */
   --dur-reveal: 600ms;    /* one-off narrative reveals, never on UI controls */
   --press-scale: 0.97;
+
+  /* ---------- Chrome ---------- */
+  --header-h: 4rem;
 }
 
 @media (min-width: 40em) { :root { --grid-columns: 6; } }
@@ -131,7 +134,13 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; color-scheme: light; }
+html { -webkit-text-size-adjust: 100%; color-scheme: light; scroll-padding-top: calc(var(--header-h) + var(--space-s)); scrollbar-color: var(--titanium-grey) transparent; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* Browser surfaces carry the palette too */
+::selection { background: var(--orbital-navy); color: var(--mineral); }
+.surface-inverse ::selection { background: var(--energy-yellow); color: var(--orbital-navy); }
+input, textarea, select { caret-color: var(--color-accent); }
 
 body {
   margin: 0;
@@ -199,6 +208,31 @@ img, canvas { display: block; max-width: 100%; }
 .pending { outline: 1px dashed var(--signal-red); outline-offset: 4px; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Skip link: first focusable element on every page */
+.skip-link {
+  position: fixed; left: var(--space-s); top: var(--space-s); z-index: var(--z-skip);
+  padding: 0.75em 1.1em; border-radius: var(--radius); background: var(--color-primary); color: var(--color-on-primary);
+  font-weight: var(--weight-ui); text-decoration: none; transform: translateY(-200%);
+}
+.skip-link:focus-visible { transform: none; }
+
+/* Section rhythm */
+.section { padding-block: var(--space-xl); }
+
+/* Static halftone (no canvas): a dot screen whose density ramps along the element. */
+.halftone {
+  --dot: var(--color-text);
+  background: radial-gradient(circle, var(--dot) 1.15px, transparent 1.6px) 0 0 / 10px 10px;
+  -webkit-mask-image: linear-gradient(90deg, #000, transparent);
+  mask-image: linear-gradient(90deg, #000, transparent);
+}
+
+/* Editorial reveal: one quiet entrance, only for elements marked data-reveal and only with JS. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] { transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out); transition-delay: calc(var(--i, 0) * 70ms); }
+  .js [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(14px); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }

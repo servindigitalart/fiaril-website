@@ -4,13 +4,14 @@
 export interface Pointer { x: number; y: number; strength: number; taps: number; }
 export interface Frame { ctx: CanvasRenderingContext2D; w: number; h: number; t: number; dt: number; pointer: Pointer; }
 export interface StageOptions { setup?: (w: number, h: number) => void; draw: (f: Frame) => void; }
+export interface StageControl { readonly animated: boolean; setPaused(paused: boolean): void; }
 
 export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function stage(canvas: HTMLCanvasElement, { setup, draw }: StageOptions) {
+export function stage(canvas: HTMLCanvasElement, { setup, draw }: StageOptions): StageControl {
   const ctx = canvas.getContext('2d', { alpha: false })!;
   const pointer: Pointer = { x: -1e4, y: -1e4, strength: 0, taps: 0 };
-  let hover = false, pulse = 0, w = 0, h = 0, raf = 0, last = 0, t = 0, visible = false;
+  let paused = false, hover = false, pulse = 0, w = 0, h = 0, raf = 0, last = 0, t = 0, visible = false;
   const still = reducedMotion();
 
   const resize = () => {
@@ -31,10 +32,10 @@ export function stage(canvas: HTMLCanvasElement, { setup, draw }: StageOptions) 
     pointer.strength += (target - pointer.strength) * Math.min(dt * 6, 1);
     if (pulse > 0) { pulse = Math.max(0, pulse - dt * 0.9); pointer.strength = Math.max(pointer.strength, pulse); }
     draw({ ctx, w, h, t: still ? 6 : t, dt: still ? 0 : dt, pointer });
-    raf = visible && !still ? requestAnimationFrame(frame) : 0;
+    raf = visible && !still && !paused ? requestAnimationFrame(frame) : 0;
   };
 
-  const start = () => { if (!raf && visible && !still && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
+  const start = () => { if (!raf && visible && !still && !paused && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
   const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
   const local = (e: PointerEvent) => { const r = canvas.getBoundingClientRect(); pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; };
@@ -45,6 +46,9 @@ export function stage(canvas: HTMLCanvasElement, { setup, draw }: StageOptions) 
   new ResizeObserver(resize).observe(canvas);
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? start() : stop(); }).observe(canvas);
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+  // WCAG 2.2.2: pages running a stage for more than 5 s expose a pause control wired to this.
+  return { animated: !still, setPaused(p) { paused = p; p ? stop() : start(); } };
 }
 
 /** Seeded PRNG so every visitor sees the same composition. */

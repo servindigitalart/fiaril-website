@@ -1,0 +1,164 @@
+---
+// Two states. "top" (home, desktop only): transparent over the hero with the full approved logo,
+// which needs ≥136px of content height to stay legible (DESIGN.md › Logo). "compact": solid bar
+// with the isotype (favicon.png). Mobile always uses the compact bar plus a native <dialog> menu.
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-fiaril-full.png';
+import isotype from '../assets/isotype.png';
+
+interface Props { overlay?: boolean }
+const { overlay = false } = Astro.props;
+
+const links = [
+  { href: '/#nosotros', label: 'Nosotros', id: 'nosotros' },
+  { href: '/#especialidades', label: 'Especialidades', id: 'especialidades' },
+  { href: '/#acompanamiento', label: 'Acompañamiento técnico', id: 'acompanamiento' },
+];
+---
+<header class="site-header" data-overlay={overlay ? '' : undefined} data-state={overlay ? 'top' : 'compact'}>
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="FIARIL Orthopedics, inicio" translate="no">
+      {overlay && <Image class="brand-full" src={logo} alt="" height={136} densities={[1, 2]} loading="eager" fetchpriority="high" />}
+      <Image class="brand-iso" src={isotype} alt="" height={36} densities={[1, 2]} loading="eager" />
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <ul>
+        {links.map((l) => <li><a href={l.href} data-section={l.id}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <a class="btn cta" href="/#contacto">Solicitar cotización</a>
+    <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="site-menu">Menú</button>
+  </div>
+
+  <dialog id="site-menu" class="sheet" aria-label="Menú">
+    <div class="sheet-head">
+      <Image class="sheet-iso" src={isotype} alt="FIARIL Orthopedics" height={36} densities={[1, 2]} />
+      <button class="menu-close" type="button">Cerrar</button>
+    </div>
+    <nav aria-label="Menú móvil">
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        <li><a href="/#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <a class="btn sheet-cta" href="/#contacto">Solicitar cotización</a>
+  </dialog>
+</header>
+
+<style>
+  .site-header {
+    position: fixed; inset: 0 0 auto; z-index: var(--z-header);
+    background: var(--color-surface);
+    box-shadow: 0 var(--border-width) 0 var(--color-border);
+    transition: background-color var(--dur-ui) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out);
+  }
+  .bar { display: flex; align-items: center; gap: var(--space-m); height: var(--header-h); }
+  .brand { display: flex; align-items: center; flex: none; margin-right: auto; border-radius: var(--radius); }
+  .brand-iso { height: 36px; width: auto; }
+  .brand-full { display: none; }
+
+  .nav ul { display: flex; gap: var(--space-m); list-style: none; margin: 0; padding: 0; }
+  .nav a {
+    position: relative; display: inline-flex; align-items: center; min-height: 44px;
+    font-size: var(--step--1); font-weight: var(--weight-ui); letter-spacing: 0.01em; text-decoration: none;
+    color: var(--color-text-muted); transition: color var(--dur-hover) var(--ease-out);
+  }
+  /* "you are here": the signal-red dot (The Signal Rule) */
+  .nav a::before {
+    content: ''; position: absolute; left: -0.75em; top: 50%; width: 5px; height: 5px; margin-top: -2.5px;
+    border-radius: 50%; background: var(--color-accent); transform: scale(0); transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .nav a[aria-current='true'] { color: var(--color-text); }
+  .nav a[aria-current='true']::before { transform: scale(1); }
+  @media (hover: hover) and (pointer: fine) { .nav a:hover { color: var(--color-text); } }
+
+  .cta { flex: none; }
+  .menu-btn, .menu-close {
+    min-height: 44px; padding: 0 1em; border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius-pill);
+    background: transparent; color: var(--color-text); font: var(--weight-ui) var(--step--1) / 1 var(--font-sans);
+    cursor: pointer; touch-action: manipulation; transition: transform var(--dur-press) var(--ease-out);
+  }
+  .menu-btn:active, .menu-close:active { transform: scale(var(--press-scale)); }
+
+  /* below 64em: menu button; the CTA stays when there is room */
+  .nav { display: none; }
+  @media (max-width: 23.5em) { .cta { display: none; } }
+  @media (min-width: 64em) {
+    .nav { display: block; }
+    .menu-btn { display: none; }
+  }
+
+  /* Top state over the home hero (desktop): transparent, full logo */
+  @media (min-width: 64em) {
+    /* transparent bar: let the cursor reach the hero field everywhere except the controls */
+    .site-header[data-state='top'] { background: transparent; box-shadow: none; pointer-events: none; }
+    .site-header[data-state='top'] :is(a, button) { pointer-events: auto; }
+    .site-header[data-state='top'] .bar { height: calc(136px + 2 * var(--space-m)); align-items: flex-start; padding-top: var(--space-m); }
+    .site-header[data-state='top'] .brand-full { display: block; height: 136px; width: auto; }
+    .site-header[data-state='top'] .brand-iso { display: none; }
+    .site-header[data-state='top'] .nav, .site-header[data-state='top'] .cta { margin-top: 0.25rem; }
+  }
+  @media (min-width: 64em) and (prefers-reduced-motion: no-preference) {
+    .brand-full { animation: brand-in var(--dur-reveal) var(--ease-out) both; }
+    .site-header[data-state='compact'] .brand-iso { animation: brand-in var(--dur-ui) var(--ease-out) both; }
+    @keyframes brand-in { from { opacity: 0; } }
+  }
+
+  /* Mobile sheet */
+  .sheet {
+    width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0 var(--gutter) var(--space-l);
+    border: 0; background: var(--color-surface); color: var(--color-text);
+    display: none; flex-direction: column;
+  }
+  .sheet[open] { display: flex; }
+  .sheet::backdrop { background: color-mix(in srgb, var(--orbital-navy) 30%, transparent); }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); flex: none; }
+  .sheet-iso { height: 36px; width: auto; }
+  .sheet nav { flex: 1; display: flex; align-items: center; }
+  .sheet ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-xs); }
+  .sheet nav a {
+    display: block; padding-block: 0.15em; text-decoration: none;
+    font-size: var(--step-3); font-weight: var(--weight-display); letter-spacing: -0.03em; line-height: 1.15;
+  }
+  .sheet-cta { align-self: flex-start; }
+  @media (prefers-reduced-motion: no-preference) {
+    .sheet[open] { animation: sheet-in var(--dur-panel) var(--ease-drawer) both; }
+    .sheet[open] li { animation: sheet-in var(--dur-panel) var(--ease-out) both; animation-delay: calc(60ms + var(--n, 0) * 40ms); }
+    .sheet li:nth-child(2) { --n: 1; } .sheet li:nth-child(3) { --n: 2; } .sheet li:nth-child(4) { --n: 3; }
+    @keyframes sheet-in { from { opacity: 0; transform: translateY(-10px); } }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header')!;
+  const sheet = document.querySelector<HTMLDialogElement>('#site-menu')!;
+  const openBtn = header.querySelector<HTMLButtonElement>('.menu-btn')!;
+
+  openBtn.addEventListener('click', () => sheet.showModal());
+  sheet.querySelector('.menu-close')!.addEventListener('click', () => sheet.close());
+  sheet.addEventListener('click', (e) => {
+    if ((e.target as Element).closest('a') || e.target === sheet) sheet.close(); // link or backdrop
+  });
+  sheet.addEventListener('close', () => openBtn.focus());
+
+  // top ↔ compact on the home page: past the first 48px the bar becomes solid
+  if (header.hasAttribute('data-overlay')) {
+    const sentinel = Object.assign(document.createElement('div'), { ariaHidden: 'true' });
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:48px;pointer-events:none';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(([e]) => (header.dataset.state = e.isIntersecting ? 'top' : 'compact')).observe(sentinel);
+  }
+
+  // "you are here": mark the nav link of the section crossing the middle of the viewport
+  const navLinks = [...header.querySelectorAll<HTMLAnchorElement>('.nav a[data-section]')];
+  const sections = navLinks.map((a) => document.getElementById(a.dataset.section!)).filter(Boolean) as HTMLElement[];
+  if (sections.length) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const link = navLinks.find((a) => a.dataset.section === e.target.id)!;
+        e.isIntersecting ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current');
+      }
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    sections.forEach((s) => io.observe(s));
+  }
+</script>

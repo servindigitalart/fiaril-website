@@ -24,6 +24,7 @@ const { slug, code, title, family, note, try: hint } = Astro.props;
     'f02-chromatic-offset': () => import('../../lab/f02-chromatic-offset'),
     'f03-living-anatomy': () => import('../../lab/f03-living-anatomy'),
     'f04-cursor-waves': () => import('../../lab/f04-cursor-waves'),
+    'f05-precision-field': () => import('../../lab/f05-precision-field'),
   };
   const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-exp]')!;
   loaders[canvas.dataset.exp as keyof typeof loaders]().then((m) => m.default(canvas));

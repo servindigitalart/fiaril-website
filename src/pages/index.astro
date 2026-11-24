@@ -1,16 +1,424 @@
 ---
-// Temporary holding page. The real homepage is Phase 5 (docs/08-implementation-roadmap.md).
+// Home. Every statement comes from confirmed facts in PRODUCT.md; nothing marked [P] is published.
 import Base from '../layouts/Base.astro';
+
+const lines = [
+  { id: 'implantes', name: 'Implantes' },
+  { id: 'equipamiento', name: 'Equipamiento' },
+  { id: 'consumibles', name: 'Consumibles quirúrgicos' },
+];
 ---
-<Base title="FIARIL Orthopedics">
-  <section class="wrap hold">
-    <p class="label">Pre-producción</p>
-    <h1>FIARIL Orthopedics</h1>
-    <p>Soluciones ortopédicas para el entorno hospitalario. Sitio en construcción: el contenido institucional está pendiente de validación con FIARIL.</p>
-    <a class="btn" href="/lab/">Ver Creative Lab</a>
+<Base title="FIARIL Orthopedics · La precisión lo cambia todo." overlay>
+  <!-- HERO: F05 Precision Field. The copy never depends on the canvas. -->
+  <section class="hero" aria-labelledby="hero-title">
+    <canvas class="hero-field" aria-hidden="true"></canvas>
+    <div class="wrap hero-grid">
+      <div class="hero-stage" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <h1 id="hero-title" class="display" data-clear>La precisión lo cambia todo.</h1>
+        <p class="hero-lede" data-clear>Tecnología ortopédica y conocimiento especializado al servicio de cada procedimiento.</p>
+        <div class="hero-actions" data-clear>
+          <a class="btn" href="#contacto">Solicitar cotización</a>
+          <a class="btn btn--ghost" href="#especialidades">Explorar especialidades</a>
+        </div>
+      </div>
+      <div class="hero-foot">
+        <p class="signature" data-clear translate="no">Ortopedia en movimiento.</p>
+        <button class="field-toggle" type="button" data-clear hidden>Pausar animación</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOSOTROS: what FIARIL is, as a technical sheet -->
+  <section id="nosotros" class="section about" aria-labelledby="about-title">
+    <div class="wrap about-grid">
+      <h2 id="about-title" class="statement" data-reveal>Suministro especializado y presencia técnica en el procedimiento.</h2>
+      <div class="about-body">
+        <p class="about-lede" data-reveal style="--i: 1">FIARIL Orthopedics es una empresa especializada en soluciones ortopédicas. Suministra implantes, equipamiento y consumibles quirúrgicos a instituciones de salud y acompaña técnicamente a los equipos durante los procedimientos quirúrgicos.</p>
+        <dl class="spec">
+          <div data-reveal style="--i: 2"><dt>Suministro</dt><dd>Implantes, equipamiento y consumibles quirúrgicos</dd></div>
+          <div data-reveal style="--i: 3"><dt>Para</dt><dd>Instituciones de salud: áreas de compras y equipos quirúrgicos</dd></div>
+          <div data-reveal style="--i: 4"><dt>En quirófano</dt><dd>Acompañamiento técnico durante el procedimiento</dd></div>
+          <div data-reveal style="--i: 5"><dt>Cotización</dt><dd>Bajo solicitud, para cada institución</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESPECIALIDADES: the three confirmed supply lines. Per-specialty catalogue is pending (PRODUCT.md [P]). -->
+  <section id="especialidades" class="section lines" aria-labelledby="lines-title">
+    <div class="wrap">
+      <div class="lines-head">
+        <h2 id="lines-title" data-reveal>Especialidades</h2>
+        <p data-reveal style="--i: 1">Tres líneas de suministro para cirugía ortopédica.</p>
+      </div>
+      <ul class="lines-list">
+        {lines.map((l, i) => (
+          <li data-reveal style={`--i: ${i + 1}`}>
+            <a href="#contacto" data-interes={l.id}>
+              <span class="line-name">{l.name}</span>
+              <span class="line-action">Solicitar información</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="lines-note" data-reveal>El catálogo por especialidad se publicará en esta sección. Mientras tanto, solicite información sobre el producto o el procedimiento que necesita.</p>
+    </div>
+  </section>
+
+  <!-- ACOMPAÑAMIENTO: the "quirófano nocturno" moment (inverse surface, B) -->
+  <section id="acompanamiento" class="section care surface-inverse" aria-labelledby="care-title">
+    <div class="lamp" aria-hidden="true"></div>
+    <div class="wrap care-grid">
+      <h2 id="care-title" class="statement" data-reveal>En el quirófano, junto al equipo quirúrgico.</h2>
+      <div class="care-body">
+        <p data-reveal style="--i: 1">Además de suministrar el material, FIARIL acompaña técnicamente a los equipos durante el procedimiento quirúrgico.</p>
+        <a class="btn" href="#contacto" data-interes="acompanamiento" data-reveal style="--i: 2">Consultar acompañamiento técnico</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO: Netlify Forms. Success is shown only when the server confirms it. -->
+  <section id="contacto" class="section contact" aria-labelledby="contact-title">
+    <div class="wrap contact-grid">
+      <div class="contact-intro">
+        <h2 id="contact-title" data-reveal>Solicitar cotización</h2>
+        <p data-reveal style="--i: 1">Describa el producto, la línea o el procedimiento, y la institución para la que solicita la cotización.</p>
+      </div>
+
+      <form class="form" name="cotizacion" method="POST" data-netlify="true" netlify-honeypot="sitio-web" novalidate>
+        <input type="hidden" name="form-name" value="cotizacion" />
+        <p class="trap" aria-hidden="true"><label>No llenar este campo <input name="sitio-web" tabindex="-1" autocomplete="off" /></label></p>
+
+        <div class="field">
+          <label for="f-nombre">Nombre y apellidos</label>
+          <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="e-nombre" />
+          <p class="error" id="e-nombre" data-msg="Indique su nombre."></p>
+        </div>
+        <div class="field">
+          <label for="f-institucion">Institución</label>
+          <input id="f-institucion" name="institucion" type="text" autocomplete="organization" required aria-describedby="e-institucion" />
+          <p class="error" id="e-institucion" data-msg="Indique la institución de salud."></p>
+        </div>
+        <div class="field">
+          <label for="f-perfil">Perfil</label>
+          <select id="f-perfil" name="perfil" required aria-describedby="e-perfil">
+            <option value="" selected disabled>Seleccione una opción</option>
+            <option>Compras o abastecimiento</option>
+            <option>Cirujano o cirujana</option>
+            <option>Personal de quirófano</option>
+            <option>Otro</option>
+          </select>
+          <p class="error" id="e-perfil" data-msg="Seleccione su perfil."></p>
+        </div>
+        <div class="field">
+          <label for="f-interes">Línea de interés</label>
+          <select id="f-interes" name="interes" required aria-describedby="e-interes">
+            <option value="" selected disabled>Seleccione una opción</option>
+            <option value="implantes">Implantes</option>
+            <option value="equipamiento">Equipamiento</option>
+            <option value="consumibles">Consumibles quirúrgicos</option>
+            <option value="acompanamiento">Acompañamiento técnico</option>
+            <option value="otra">Otra</option>
+          </select>
+          <p class="error" id="e-interes" data-msg="Seleccione una línea de interés."></p>
+        </div>
+        <div class="field">
+          <label for="f-correo">Correo electrónico</label>
+          <input id="f-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@institucion.mx" aria-describedby="e-correo" />
+          <p class="error" id="e-correo" data-msg="Indique un correo válido, por ejemplo nombre@institucion.mx."></p>
+        </div>
+        <div class="field">
+          <label for="f-telefono">Teléfono <span class="optional">(opcional)</span></label>
+          <input id="f-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" />
+        </div>
+        <div class="field wide">
+          <label for="f-mensaje">Mensaje</label>
+          <textarea id="f-mensaje" name="mensaje" rows="5" required aria-describedby="e-mensaje" placeholder="Producto, cantidad, procedimiento o fecha prevista…"></textarea>
+          <p class="error" id="e-mensaje" data-msg="Describa qué necesita cotizar."></p>
+        </div>
+        <div class="field wide check">
+          <input id="f-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="e-privacidad" />
+          <label for="f-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label>
+          <p class="error" id="e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p>
+        </div>
+        <div class="wide submit-row">
+          <button class="btn" type="submit">Solicitar cotización</button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
   </section>
 </Base>
 
+<script>
+  import field from '../lab/f05-precision-field';
+  import type { Rect } from '../lab/f05-precision-field';
+
+  // ---------- Hero field ----------
+  const hero = document.querySelector<HTMLElement>('.hero')!;
+  const canvas = hero.querySelector<HTMLCanvasElement>('.hero-field')!;
+  const stageEl = hero.querySelector<HTMLElement>('.hero-stage')!;
+  const rect = (el: Element, pad = 0): Rect => {
+    const c = canvas.getBoundingClientRect(), b = el.getBoundingClientRect();
+    return [b.left - c.left - pad, b.top - c.top - pad, b.right - c.left + pad, b.bottom - c.top + pad];
+  };
+  const control = field(canvas, {
+    focus: () => {
+      const [l, t, r, b] = rect(stageEl), w = r - l, h = b - t;
+      return { cx: l + w / 2, cy: t + h / 2, size: Math.max(60, Math.min(w / 3.3, h / 3.2)) };
+    },
+    holes: () => [...document.querySelectorAll('.hero [data-clear]:not([hidden]), .site-header[data-state="top"] :is(.brand, .nav, .cta), .site-header .bar > :is(.brand, .cta, .menu-btn)')]
+      .map((el) => rect(el, 10)),
+  });
+  const toggle = hero.querySelector<HTMLButtonElement>('.field-toggle')!;
+  if (control.animated) {
+    let paused = false;
+    toggle.hidden = false;
+    toggle.addEventListener('click', () => {
+      paused = !paused;
+      control.setPaused(paused);
+      toggle.textContent = paused ? 'Reanudar animación' : 'Pausar animación';
+    });
+  }
+
+  // ---------- Editorial reveals ----------
+  const reveal = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); reveal.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll('[data-reveal]').forEach((el) => reveal.observe(el));
+
+  // ---------- Surgical lamp: the halftone light follows the cursor (fine pointers only) ----------
+  const care = document.querySelector<HTMLElement>('.care')!;
+  const lamp = care.querySelector<HTMLElement>('.lamp')!;
+  let lampFrame = 0;
+  care.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse' || lampFrame) return;
+    lampFrame = requestAnimationFrame(() => {
+      lampFrame = 0;
+      const b = lamp.getBoundingClientRect();
+      lamp.style.setProperty('--lx', `${Math.min(100, Math.max(0, ((e.clientX - b.left) / b.width) * 100))}%`);
+      lamp.style.setProperty('--ly', `${Math.min(100, Math.max(0, ((e.clientY - b.top) / b.height) * 100))}%`);
+    });
+  });
+  care.addEventListener('pointerleave', () => { lamp.style.removeProperty('--lx'); lamp.style.removeProperty('--ly'); });
+
+  // ---------- Contact form ----------
+  const form = document.querySelector<HTMLFormElement>('form[name="cotizacion"]')!;
+  const status = form.querySelector<HTMLElement>('.status')!;
+  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  const interes = form.querySelector<HTMLSelectElement>('#f-interes')!;
+
+  // "Solicitar información" links preselect the line of interest
+  document.querySelectorAll<HTMLAnchorElement>('a[data-interes]').forEach((a) =>
+    a.addEventListener('click', () => { interes.value = a.dataset.interes!; }));
+
+  const fields = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[required]')];
+  const check = (el: (typeof fields)[number]) => {
+    const err = document.getElementById(el.getAttribute('aria-describedby')!)!;
+    const ok = el.type === 'checkbox' ? (el as HTMLInputElement).checked : el.checkValidity() && el.value.trim() !== '';
+    el.toggleAttribute('aria-invalid', !ok);
+    err.textContent = ok ? '' : err.dataset.msg!;
+    return ok;
+  };
+  // once a field has been flagged, clear its error as soon as it becomes valid. Validating on `input`
+  // (not `blur`) matters: a message collapsing on blur shifts the layout between mousedown and
+  // mouseup, and the click on the next control is lost.
+  fields.forEach((el) => el.addEventListener(el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input', () => el.hasAttribute('aria-invalid') && check(el)));
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const invalid = fields.filter((el) => !check(el));
+    if (invalid.length) { invalid[0].focus(); status.textContent = ''; return; }
+
+    submit.disabled = true;
+    submit.textContent = 'Enviando…';
+    status.dataset.state = '';
+    status.textContent = '';
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString(),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      status.dataset.state = 'ok';
+      status.textContent = 'Solicitud enviada. FIARIL recibió su solicitud de cotización.';
+    } catch (err) {
+      status.dataset.state = 'error';
+      status.textContent = /^\d+$/.test((err as Error).message)
+        ? `No se pudo enviar la solicitud: el servidor respondió con el error ${(err as Error).message}. Sus datos siguen en el formulario; inténtelo de nuevo más tarde.`
+        : 'No se pudo enviar la solicitud: no hay conexión con el servidor. Sus datos siguen en el formulario; inténtelo de nuevo.';
+    } finally {
+      submit.disabled = false;
+      submit.textContent = 'Solicitar cotización';
+    }
+  });
+</script>
+
 <style>
-  .hold { padding-block: var(--space-xl); }
+  /* ============ Hero ============ */
+  .hero { position: relative; display: grid; min-height: 100svh; }
+  .hero-field { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
+  .hero-grid {
+    position: relative;
+    display: grid; grid-template-rows: minmax(min(46svh, 26rem), 1fr) auto auto; gap: var(--space-m);
+    padding-block: var(--header-h) var(--space-m);
+    pointer-events: none; /* the cursor reaches the field; controls opt back in */
+  }
+  .hero-grid :is(a, button) { pointer-events: auto; }
+  .hero-copy { align-self: end; }
+  .hero-copy .display { max-width: 11ch; margin: 0; color: var(--color-text); }
+  .hero-lede { margin: var(--space-m) 0 0; max-width: 34ch; font-size: var(--step-1); line-height: 1.45; color: var(--color-text-muted); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-l); width: fit-content; }
+  .hero-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-s); }
+  .signature { margin: 0; font-size: var(--step--1); font-weight: var(--weight-heading); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); }
+  .field-toggle {
+    min-height: 44px; padding: 0 1em; border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius-pill);
+    background: var(--color-surface); color: var(--color-text); font: var(--weight-ui) var(--step--1) / 1 var(--font-sans);
+    cursor: pointer; touch-action: manipulation;
+    transition: background-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
+  }
+  .field-toggle:active { transform: scale(var(--press-scale)); }
+  @media (hover: hover) and (pointer: fine) { .field-toggle:hover { background: var(--color-surface-raised); } }
+
+  /* two columns: desktop, and phones held sideways */
+  @media (min-width: 64em), (orientation: landscape) and (min-width: 40em) and (max-height: 34em) {
+    .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: 1fr auto; column-gap: var(--gutter); }
+    .hero-copy { grid-area: 1 / 1; align-self: center; }
+    .hero-stage { grid-area: 1 / 2; }
+    .hero-foot { grid-area: 2 / 1 / 3 / 3; }
+  }
+  @media (min-width: 64em) {
+    .hero-grid { padding-top: calc(136px + 2 * var(--space-m)); }
+  }
+  @media (orientation: landscape) and (max-height: 34em) {
+    .hero-grid { padding-top: calc(var(--header-h) + var(--space-m)); }
+    .hero-copy .display { font-size: clamp(2rem, 1rem + 5vh, 3rem); }
+    .hero-lede { font-size: var(--step-0); margin-top: var(--space-s); }
+    .hero-actions { margin-top: var(--space-m); }
+  }
+
+  /* one orchestrated entrance: the copy settles while the anatomy assembles */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-copy > *, .hero-foot { animation: hero-in 900ms var(--ease-out) both; }
+    .hero-lede { animation-delay: 120ms; }
+    .hero-actions { animation-delay: 220ms; }
+    .hero-foot { animation-delay: 600ms; }
+    @keyframes hero-in { from { opacity: 0; transform: translateY(18px); } }
+  }
+
+  /* one heading voice across sections: regular weight, tight tracking (display 300 stays in the hero) */
+  .section h2 { font-weight: var(--weight-body); letter-spacing: -0.03em; }
+
+  /* ============ Nosotros ============ */
+  .about-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 64em) { .about-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); } }
+  .statement { font-size: var(--step-3); font-weight: var(--weight-body); letter-spacing: -0.03em; line-height: 1.08; max-width: 18ch; }
+  .about-lede { font-size: var(--step-1); line-height: 1.5; max-width: 40ch; }
+  .spec { margin: var(--space-l) 0 0; }
+  .spec div { position: relative; display: grid; gap: var(--space-2xs); padding-block: var(--space-s); }
+  @media (min-width: 40em) { .spec div { grid-template-columns: 11rem 1fr; gap: var(--space-m); } }
+  /* hairlines are drawn like a technical sheet's rules */
+  .spec div::before { content: ''; position: absolute; inset: 0 0 auto; height: var(--border-width); background: var(--color-border); transform-origin: left; }
+  .spec div:last-child { box-shadow: inset 0 calc(-1 * var(--border-width)) 0 var(--color-border); }
+  @media (prefers-reduced-motion: no-preference) {
+    .js .spec div::before { transition: transform 900ms var(--ease-in-out); transition-delay: calc(var(--i, 0) * 70ms); }
+    .js .spec div:not(.is-in)::before { transform: scaleX(0); }
+  }
+  .spec dt { font-size: var(--step--1); font-weight: var(--weight-heading); color: var(--color-text-muted); padding-top: 0.2em; }
+  .spec dd { margin: 0; }
+
+  /* ============ Especialidades ============ */
+  .lines-head { display: grid; gap: var(--space-xs); margin-bottom: var(--space-l); }
+  @media (min-width: 64em) { .lines-head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-items: baseline; } }
+  .lines-head h2, .lines-head p { margin: 0; }
+  .lines-head p { color: var(--color-text-muted); font-size: var(--step-1); }
+  .lines-list { list-style: none; margin: 0; padding: 0; border-bottom: var(--border-width) solid var(--color-border); }
+  .lines-list li { border-top: var(--border-width) solid var(--color-border); }
+  .lines-list a {
+    position: relative; isolation: isolate; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2xs) var(--space-m);
+    padding-block: var(--space-m); text-decoration: none; overflow: clip;
+  }
+  .line-name {
+    font-size: var(--step-4); font-weight: var(--weight-display); letter-spacing: -0.035em; line-height: 1;
+    transition: transform var(--dur-panel) var(--ease-out);
+  }
+  .line-action { font-size: var(--step--1); font-weight: var(--weight-ui); color: var(--color-text-muted); transition: color var(--dur-hover) var(--ease-out); }
+  /* hover: the halftone screen rises behind the row, the name steps forward */
+  .lines-list a::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0;
+    background: radial-gradient(circle, color-mix(in srgb, var(--orbital-navy) 22%, transparent) 1.1px, transparent 1.6px) 0 0 / 9px 9px;
+    -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000); mask-image: linear-gradient(90deg, transparent 30%, #000);
+    transition: opacity var(--dur-panel) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lines-list a:hover .line-name { transform: translateX(0.35em); }
+    .lines-list a:hover .line-action { color: var(--color-accent); }
+    .lines-list a:hover::after { opacity: 1; }
+  }
+  .lines-list a:focus-visible { outline-offset: -2px; }
+  @media (max-width: 39.99em) { .lines-list a { flex-direction: column; align-items: flex-start; } }
+  .lines-note { margin-top: var(--space-m); color: var(--color-text-muted); }
+
+  /* ============ Acompañamiento: quirófano nocturno ============ */
+  @property --lx { syntax: '<percentage>'; inherits: false; initial-value: 62%; }
+  @property --ly { syntax: '<percentage>'; inherits: false; initial-value: 42%; }
+  .care { position: relative; overflow: clip; display: grid; min-height: min(56rem, 92svh); padding-block: var(--space-2xl); }
+  .lamp {
+    position: absolute; inset: 0 0 45% 0; pointer-events: none;
+    background:
+      radial-gradient(circle, rgba(247, 247, 247, 0.92) 1.5px, transparent 2.1px) 0 0 / 14px 14px,
+      radial-gradient(circle, rgba(247, 247, 247, 0.32) 0.8px, transparent 1.2px) 7px 7px / 14px 14px;
+    -webkit-mask-image: radial-gradient(circle at var(--lx) var(--ly), #000 0, rgba(0, 0, 0, 0.45) 16%, rgba(0, 0, 0, 0.08) 34%, transparent 52%);
+    mask-image: radial-gradient(circle at var(--lx) var(--ly), #000 0, rgba(0, 0, 0, 0.45) 16%, rgba(0, 0, 0, 0.08) 34%, transparent 52%);
+    transition: --lx 900ms var(--ease-out), --ly 900ms var(--ease-out);
+  }
+  .care-grid { position: relative; display: grid; gap: var(--space-l); align-self: end; }
+  .care .statement { font-size: var(--step-4); font-weight: var(--weight-display); letter-spacing: -0.035em; max-width: 14ch; margin: 0; }
+  .care-body p { font-size: var(--step-1); line-height: 1.5; color: var(--color-text-muted); max-width: 36ch; }
+  .care-body .btn { margin-top: var(--space-s); }
+  @media (min-width: 64em) {
+    .lamp { inset: 0 0 0 45%; }
+    .care-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-self: center; }
+    .care-body { grid-column: 1; }
+  }
+
+  /* ============ Contacto ============ */
+  .contact-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 64em) { .contact-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); } }
+  .contact-intro p { font-size: var(--step-1); line-height: 1.5; color: var(--color-text-muted); max-width: 32ch; }
+  .form { display: grid; gap: var(--space-m) var(--space-s); align-content: start; }
+  @media (min-width: 40em) { .form { grid-template-columns: 1fr 1fr; } .form .wide { grid-column: 1 / -1; } }
+  .trap { position: absolute; left: -100vw; }
+  .field { display: grid; gap: var(--space-2xs); align-content: start; }
+  .field label { font-size: var(--step--1); font-weight: var(--weight-heading); }
+  .optional { font-weight: var(--weight-body); color: var(--color-text-muted); }
+  .field :is(input, select, textarea) {
+    width: 100%; min-height: 48px; padding: 0.7em 0.85em;
+    font: inherit; color: var(--color-text); background-color: var(--color-surface-raised);
+    border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius);
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  .field textarea { resize: vertical; min-height: 8rem; }
+  .field select {
+    appearance: none; padding-right: 2.5em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2307253f' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 0.95em center;
+  }
+  .field ::placeholder { color: var(--color-text-muted); opacity: 1; }
+  .field :is(input, select, textarea):focus-visible { outline-offset: 1px; border-color: var(--color-text); }
+  .field [aria-invalid] { border-color: var(--color-accent); }
+  .error { margin: 0; min-height: 0; font-size: var(--step--1); font-weight: var(--weight-ui); color: var(--color-accent); }
+  .error:empty { display: none; }
+  .check { grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-xs); }
+  .check input { width: 22px; height: 22px; min-height: 0; margin: 0; accent-color: var(--orbital-navy); }
+  .check label { font-weight: var(--weight-body); font-size: var(--step-0); }
+  .check .error { grid-column: 1 / -1; }
+  .submit-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-s); }
+  .submit-row .btn:disabled { opacity: 0.6; cursor: progress; }
+  .status { margin: 0; font-size: var(--step--1); font-weight: var(--weight-ui); }
+  .status[data-state='error'] { color: var(--color-accent); }
+  .status[data-state='ok'] { color: var(--color-text); }
 </style>

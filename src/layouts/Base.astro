@@ -1,10 +1,20 @@
 ---
 import '../styles/global.css';
-import { Image } from 'astro:assets';
-import logo from '../assets/logo-fiaril.jpeg';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
-interface Props { title: string; description?: string; }
-const { title, description = 'FIARIL Orthopedics — soluciones ortopédicas para el entorno hospitalario.' } = Astro.props;
+interface Props {
+  title: string;
+  description?: string;
+  /** Home only: the header starts transparent over the hero. */
+  overlay?: boolean;
+}
+const {
+  title,
+  description = 'Tecnología ortopédica y conocimiento especializado al servicio de cada procedimiento.',
+  overlay = false,
+} = Astro.props;
+const og = new URL('/og.png', Astro.site);
 ---
 <!doctype html>
 <html lang="es">
@@ -14,25 +24,31 @@ const { title, description = 'FIARIL Orthopedics — soluciones ortopédicas par
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f7f7f7" />
-    <link rel="icon" href="data:," /><!-- ponytail: no favicon until FIARIL supplies a vector isotype -->
-    <meta name="robots" content="noindex" /><!-- pre-launch: remove when going to production -->
+    <meta name="robots" content="noindex" /><!-- pre-launch (D-008): remove when the official domain goes live -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="FIARIL Orthopedics" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={og.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FIARIL Orthopedics. La precisión lo cambia todo." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    <header class="site-header wrap">
-      <a href="/" class="brand" aria-label="FIARIL Orthopedics — inicio">
-        <Image src={logo} alt="" width={120} loading="eager" />
-      </a>
-      <nav aria-label="Principal"><a class="label" href="/lab/">Creative Lab</a></nav>
-    </header>
-    <main><slot /></main>
-    <footer class="site-footer wrap label">
-      <span>FIARIL Orthopedics</span><span>Pre-producción · contenido pendiente de validación</span>
-    </footer>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <SiteHeader overlay={overlay} />
+    <main id="contenido" class:list={[{ padded: !overlay }]} tabindex="-1"><slot /></main>
+    <SiteFooter />
   </body>
 </html>
 
 <style>
-  .site-header, .site-footer { display: flex; justify-content: space-between; align-items: center; gap: var(--space-s); padding-block: var(--space-m); }
-  .site-footer { flex-wrap: wrap; border-top: 1px solid var(--color-border); margin-top: var(--space-xl); }
-  nav a { text-decoration: none; }
+  .padded { padding-top: var(--header-h); }
+  main:focus { outline: none; }
 </style>

@@ -1,0 +1,51 @@
+---
+// Closes the page on the light surface, where the full approved logo can live (no negative version, D-018).
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-fiaril-full.png';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="halftone rule" aria-hidden="true"></div>
+  <div class="wrap grid">
+    <div class="brand">
+      <Image src={logo} alt="FIARIL Orthopedics" height={136} densities={[1, 2]} />
+      <p class="signature" translate="no">Ortopedia en movimiento.</p>
+    </div>
+    <nav aria-label="Pie de página">
+      <ul>
+        <li><a href="/#nosotros">Nosotros</a></li>
+        <li><a href="/#especialidades">Especialidades</a></li>
+        <li><a href="/#acompanamiento">Acompañamiento técnico</a></li>
+        <li><a href="/#contacto">Solicitar cotización</a></li>
+      </ul>
+    </nav>
+    <ul class="secondary">
+      <li><a href="/privacidad/">Aviso de privacidad</a></li>
+      <li><a href="/lab/">Creative Lab</a></li>
+    </ul>
+  </div>
+  <div class="wrap legal">
+    <p>© {year} FIARIL Orthopedics</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { margin-top: var(--space-m); }
+  .rule { height: 3.5rem; }
+  .grid {
+    display: grid; gap: var(--space-l); padding-block: var(--space-l) var(--space-m);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40em) { .grid { grid-template-columns: 1.4fr 1fr 1fr; align-items: start; } }
+  .brand img { height: 136px; width: auto; }
+  .signature { margin: var(--space-s) 0 0; font-size: var(--step--1); font-weight: var(--weight-heading); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2xs); }
+  a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; color: var(--color-text); }
+  @media (hover: hover) and (pointer: fine) {
+    a { text-decoration: underline; text-decoration-color: transparent; transition: text-decoration-color var(--dur-hover) var(--ease-out); }
+    a:hover { text-decoration-color: currentColor; }
+  }
+  .secondary a { color: var(--color-text-muted); }
+  .legal { padding-block: var(--space-m); border-top: var(--border-width) solid var(--color-border); }
+  .legal p { margin: 0; font-size: var(--step--1); color: var(--color-text-muted); }
+</style>
