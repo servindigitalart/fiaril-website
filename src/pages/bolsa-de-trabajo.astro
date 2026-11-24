@@ -1,0 +1,100 @@
+---
+// /bolsa-de-trabajo/ (D-051): an invitation, not a form page. Mineral, editorial, typographic.
+// No vacancies, salaries, benefits or conditions are invented. Reception OFF: the CV never leaves the device.
+import Base from '../layouts/Base.astro';
+import { RECEPCION_ACTIVA } from '../scripts/reception';
+const CV_MAX_MB = 5;
+---
+<Base flush title="Bolsa de trabajo · FIARIL Orthopedics" description="Prepare su candidatura para FIARIL Orthopedics. Las vacantes se publicarán en esta página.">
+  <section class="careers surface-mineral" data-surface="mineral" aria-labelledby="careers-title">
+    <header class="wrap opening">
+      <nav class="crumbs t-meta" aria-label="Ruta"><a href="/">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Bolsa de trabajo</span></nav>
+      <h1 id="careers-title" class="t-display">El talento también construye precisión.</h1>
+      <p class="t-lead">Nos interesa conocer personas que compartan el valor del conocimiento, la precisión y el trabajo en equipo.</p>
+    </header>
+    <div class="screen" aria-hidden="true"></div>
+
+    <div class="wrap careers-grid">
+      <aside class="state">
+        <dl>
+          <div><dt class="t-meta">Vacantes</dt><dd>No hay vacantes publicadas en este momento.</dd></div>
+          <div><dt class="t-meta">Publicación</dt><dd>Las oportunidades se anunciarán en esta página.</dd></div>
+          <div><dt class="t-meta">Su CV</dt><dd>Mientras la recepción esté en preparación, el archivo no sale de este dispositivo.</dd></div>
+        </dl>
+      </aside>
+
+      <div class="panel surface-mist">
+        <h2 class="t-subtitle">Prepare su candidatura</h2>
+        <form class="form" name="candidatura" method="POST" enctype="multipart/form-data" novalidate
+          data-netlify={RECEPCION_ACTIVA ? 'true' : undefined} netlify-honeypot={RECEPCION_ACTIVA ? 'sitio-web' : undefined}
+          data-reception={RECEPCION_ACTIVA ? 'on' : 'off'}
+          data-pending-title="Candidatura completa, sin enviar."
+          data-pending-body="La recepción de candidaturas se habilitará próximamente. Sus datos y su CV no se enviaron ni se almacenaron: el archivo nunca salió de este dispositivo."
+          data-ok-text="Candidatura enviada. FIARIL recibió su candidatura.">
+          <input type="hidden" name="form-name" value="candidatura" />
+          <p class="trap" aria-hidden="true"><label>No llenar este campo <input name="sitio-web" tabindex="-1" autocomplete="off" /></label></p>
+          <div class="field"><label for="c-nombre">Nombre completo</label><input id="c-nombre" name="nombre" autocomplete="name" required aria-describedby="c-e-nombre" /><p class="error" id="c-e-nombre" data-msg="Indique su nombre completo."></p></div>
+          <div class="field"><label for="c-correo">Correo electrónico</label><input id="c-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@correo.com" aria-describedby="c-e-correo" /><p class="error" id="c-e-correo" data-msg="Indique un correo válido, por ejemplo nombre@correo.com."></p></div>
+          <div class="field"><label for="c-telefono">Teléfono <span class="optional">(opcional)</span></label><input id="c-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" /></div>
+          <div class="field"><label for="c-area">Área de interés</label><input id="c-area" name="area" required aria-describedby="c-e-area" /><p class="error" id="c-e-area" data-msg="Indique en qué área le gustaría colaborar."></p></div>
+          <div class="field wide"><label for="c-mensaje">Mensaje breve</label><textarea id="c-mensaje" name="mensaje" rows="4" maxlength="600" required aria-describedby="c-h-mensaje c-e-mensaje"></textarea><p class="help" id="c-h-mensaje">Hasta 600 caracteres: su experiencia y qué le interesa de FIARIL.</p><p class="error" id="c-e-mensaje" data-msg="Escriba un mensaje breve."></p></div>
+          <div class="field wide">
+            <span class="field-label" id="c-l-cv">CV en PDF</span>
+            <div class="file">
+              <input id="c-cv" name="cv" type="file" accept="application/pdf,.pdf" required data-max-bytes={CV_MAX_MB * 1048576} aria-labelledby="c-l-cv" aria-describedby="c-h-cv c-e-cv" />
+              <div class="file-zone" aria-hidden="true"><span class="file-button">Seleccionar PDF</span><span class="file-name">Ningún archivo seleccionado</span></div>
+            </div>
+            <div class="file-row"><p class="help" id="c-h-cv">Formato PDF, máximo {CV_MAX_MB} MB. Puede sustituirlo eligiendo otro archivo.</p><button class="file-remove" type="button" hidden>Quitar archivo</button></div>
+            <p class="error" id="c-e-cv" data-msg="Adjunte su CV en PDF." data-msg-type="El archivo debe ser un PDF." data-msg-size={`El archivo supera ${CV_MAX_MB} MB. Adjunte una versión más ligera.`}></p>
+          </div>
+          <div class="field wide check"><input id="c-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="c-e-privacidad" /><label for="c-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label><p class="error" id="c-e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p></div>
+          <div class="wide submit-row">
+            <button class="btn" type="submit">Enviar candidatura</button>
+            {!RECEPCION_ACTIVA && <p class="reception"><span class="reception-dot" aria-hidden="true"></span>Recepción de candidaturas en preparación: su CV no saldrá de este dispositivo.</p>}
+          </div>
+          <div class="wide status" role="status" aria-live="polite" tabindex="-1"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initForms } from '../scripts/forms';
+  initForms();
+</script>
+
+<style>
+  .careers { padding-block: calc(var(--header-h) + var(--space-l)) var(--space-xl); }
+  .opening { display: grid; gap: var(--space-m); padding-bottom: var(--space-l); }
+  .crumbs { display: flex; gap: 0.6em; }
+  .crumbs a { color: var(--color-text-muted); }
+  .crumbs [aria-current] { color: var(--color-text); }
+  .opening .t-display { max-width: 14ch; margin: 0; }
+  .opening .t-lead { max-width: 44ch; }
+  /* a halftone screen that densifies left to right: the page's graphic resource */
+  .screen {
+    height: clamp(5rem, 3rem + 8vw, 10rem); margin-bottom: var(--space-xl);
+    background: radial-gradient(circle, var(--orbital-navy) 46%, transparent 50%) 0 0 / 14px 14px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 75%), linear-gradient(transparent, #000 30%, #000 70%, transparent);
+    -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent, #000 75%), linear-gradient(transparent, #000 30%, #000 70%, transparent); mask-composite: intersect;
+    opacity: 0.9;
+  }
+  .careers-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 64em) { .careers-grid { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: var(--gutter); align-items: start; } }
+  .state dl { margin: 0; }
+  .state div { display: grid; gap: var(--space-2xs); padding-block: var(--space-s); border-top: var(--border-width) solid var(--color-border-control); }
+  .state div:last-child { border-bottom: var(--border-width) solid var(--color-border-control); }
+  .state dt { color: var(--color-accent); }
+  .state dd { margin: 0; }
+  @media (min-width: 64em) { .state { position: sticky; top: calc(var(--header-h) + var(--space-l)); } }
+  .panel { border-radius: 6px; padding: clamp(1.25rem, 0.8rem + 2.4vw, 2.75rem); display: grid; gap: var(--space-m); }
+  .file-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs); }
+  .file-remove {
+    min-height: 44px; padding: 0 1em; border-radius: var(--radius-pill); border: var(--border-width) solid var(--color-border-control);
+    background: transparent; color: var(--color-text); font: var(--weight-ui) var(--type-meta) / 1 var(--font-sans); cursor: pointer;
+    transition: border-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
+  }
+  .file-remove:active { transform: scale(var(--press-scale)); }
+  @media (hover: hover) and (pointer: fine) { .file-remove:hover { border-color: var(--color-text); } }
+</style>

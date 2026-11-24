@@ -10,12 +10,6 @@ import consumablesRender from '../assets/renders/consumables.png';
 import kneeXray from '../assets/imaging/knee-lateral.jpg';
 import hipXray from '../assets/imaging/hip-ap.jpg';
 
-// Online reception stays OFF until FIARIL confirms who receives requests and publishes a valid
-// privacy notice (LFPDPPP). While off, no form is registered with Netlify Forms, nothing is sent and
-// CVs never leave the browser. To enable: set true, deploy, enable form detection (D-031, D-045).
-const RECEPCION_ACTIVA = false;
-const CV_MAX_MB = 5;
-
 const lines = [
   { id: 'implantes', name: 'Implantes', img: hipRender, alt: 'Visualización conceptual de una prótesis de cadera en vista explosionada: vástago, cabeza cerámica y copa.', caption: 'Visualización conceptual: prótesis de cadera.' },
   { id: 'equipamiento', name: 'Equipamiento', img: instrumentRender, alt: 'Visualización conceptual de un instrumento quirúrgico con mango navy y punta hexagonal.', caption: 'Visualización conceptual: instrumento quirúrgico.' },
@@ -32,7 +26,7 @@ const lines = [
         <h1 id="hero-title" class="t-display" data-clear>La precisión lo cambia todo.</h1>
         <p class="t-lead hero-lede" data-clear>Tecnología ortopédica y conocimiento especializado al servicio de cada procedimiento.</p>
         <div class="hero-actions" data-clear>
-          <a class="btn" href="#contacto">Solicitar cotización</a>
+          <a class="btn" href="/cotizacion/">Solicitar cotización</a>
           <a class="btn btn--ghost" href="#especialidades">Explorar especialidades</a>
         </div>
       </div>
@@ -82,7 +76,7 @@ const lines = [
             </figure>
             <div class="line-copy">
               <h3 class="t-subtitle" data-reveal>{l.name}</h3>
-              <a class="btn btn--ghost" href="#contacto" data-interes={l.id} data-reveal style="--i: 1">Solicitar información</a>
+              <a class="btn btn--ghost" href={`/cotizacion/?interes=${l.id}`} data-reveal style="--i: 1">Solicitar información</a>
             </div>
           </li>
         ))}
@@ -113,7 +107,6 @@ const lines = [
               <button type="button" aria-pressed="true" data-view="material">Material</button>
               <button type="button" aria-pressed="false" data-view="geometry">Geometría</button>
             </div>
-            <button class="viewer-pause" type="button" hidden>Pausar rotación</button>
           </div>
           <p class="t-meta">Visualización conceptual. No representa productos de FIARIL ni especificaciones reales.</p>
         </div>
@@ -127,90 +120,13 @@ const lines = [
   <div class="fade-between" style="--from: var(--graphite); --to: var(--orbital-navy)" aria-hidden="true"></div>
 
   <section id="acompanamiento" class="surface-navy section care" data-surface="navy" aria-labelledby="care-title">
-    <div class="lamp" aria-hidden="true"></div>
+    <canvas class="care-field" aria-hidden="true"></canvas>
     <div class="wrap care-grid">
       <h2 id="care-title" class="t-title" data-reveal>En el quirófano, junto al equipo quirúrgico.</h2>
       <div class="care-body">
         <p class="t-lead" data-reveal style="--i: 1">Además de suministrar el material, FIARIL acompaña técnicamente a los equipos durante el procedimiento quirúrgico.</p>
-        <a class="btn" href="#contacto" data-interes="acompanamiento" data-reveal style="--i: 2">Consultar acompañamiento técnico</a>
+        <a class="btn" href="/cotizacion/?interes=acompanamiento" data-reveal style="--i: 2">Consultar acompañamiento técnico</a>
       </div>
-    </div>
-  </section>
-  <div class="band-out surface-mineral" style="--band: var(--orbital-navy)" aria-hidden="true"></div>
-
-  <!-- ============ ACT III · BACK TO LIGHT ============ -->
-  <section id="contacto" class="surface-mineral section contact" data-surface="mineral" aria-labelledby="contact-title">
-    <div class="wrap form-grid">
-      <div class="form-intro">
-        <h2 id="contact-title" class="t-title" data-reveal>Solicitar cotización</h2>
-        <p class="t-lead" data-reveal style="--i: 1">Describa el producto, la línea o el procedimiento, y la institución para la que solicita la cotización.</p>
-      </div>
-      <form class="form" name="cotizacion" method="POST" novalidate
-        data-netlify={RECEPCION_ACTIVA ? 'true' : undefined} netlify-honeypot={RECEPCION_ACTIVA ? 'sitio-web' : undefined}
-        data-reception={RECEPCION_ACTIVA ? 'on' : 'off'}
-        data-pending-title="Solicitud completa, sin enviar."
-        data-pending-body="La recepción de solicitudes en línea se habilitará próximamente. Sus datos no se enviaron ni se almacenaron, y siguen en el formulario."
-        data-ok-text="Solicitud enviada. FIARIL recibió su solicitud de cotización.">
-        <input type="hidden" name="form-name" value="cotizacion" />
-        <p class="trap" aria-hidden="true"><label>No llenar este campo <input name="sitio-web" tabindex="-1" autocomplete="off" /></label></p>
-        <div class="field"><label for="q-nombre">Nombre y apellidos</label><input id="q-nombre" name="nombre" autocomplete="name" required aria-describedby="q-e-nombre" /><p class="error" id="q-e-nombre" data-msg="Indique su nombre."></p></div>
-        <div class="field"><label for="q-institucion">Institución</label><input id="q-institucion" name="institucion" autocomplete="organization" required aria-describedby="q-e-institucion" /><p class="error" id="q-e-institucion" data-msg="Indique la institución de salud."></p></div>
-        <div class="field"><label for="q-perfil">Perfil</label>
-          <select id="q-perfil" name="perfil" required aria-describedby="q-e-perfil"><option value="" selected disabled>Seleccione una opción</option><option>Compras o abastecimiento</option><option>Cirujano o cirujana</option><option>Personal de quirófano</option><option>Otro</option></select>
-          <p class="error" id="q-e-perfil" data-msg="Seleccione su perfil."></p></div>
-        <div class="field"><label for="q-interes">Línea de interés</label>
-          <select id="q-interes" name="interes" required aria-describedby="q-e-interes"><option value="" selected disabled>Seleccione una opción</option><option value="implantes">Implantes</option><option value="equipamiento">Equipamiento</option><option value="consumibles">Consumibles quirúrgicos</option><option value="acompanamiento">Acompañamiento técnico</option><option value="otra">Otra</option></select>
-          <p class="error" id="q-e-interes" data-msg="Seleccione una línea de interés."></p></div>
-        <div class="field"><label for="q-correo">Correo electrónico</label><input id="q-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@institucion.mx" aria-describedby="q-e-correo" /><p class="error" id="q-e-correo" data-msg="Indique un correo válido, por ejemplo nombre@institucion.mx."></p></div>
-        <div class="field"><label for="q-telefono">Teléfono <span class="optional">(opcional)</span></label><input id="q-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" /></div>
-        <div class="field wide"><label for="q-mensaje">Mensaje</label><textarea id="q-mensaje" name="mensaje" rows="5" required aria-describedby="q-h-mensaje q-e-mensaje" placeholder="Producto, cantidad, procedimiento o fecha prevista…"></textarea><p class="help" id="q-h-mensaje">Cuanto más concreto sea, más precisa podrá ser la cotización.</p><p class="error" id="q-e-mensaje" data-msg="Describa qué necesita cotizar."></p></div>
-        <div class="field wide check"><input id="q-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="q-e-privacidad" /><label for="q-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label><p class="error" id="q-e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p></div>
-        <div class="wide submit-row">
-          <button class="btn" type="submit">Solicitar cotización</button>
-          {!RECEPCION_ACTIVA && <p class="reception"><span class="reception-dot" aria-hidden="true"></span>Recepción en línea en preparación: este formulario todavía no envía datos.</p>}
-        </div>
-        <div class="wide status" role="status" aria-live="polite" tabindex="-1"></div>
-      </form>
-    </div>
-  </section>
-  <div class="ruler-wrap surface-mist" aria-hidden="true"><div class="ruler"></div></div>
-
-  <section id="bolsa-de-trabajo" class="surface-mist section careers" data-surface="mist" aria-labelledby="careers-title">
-    <div class="wrap form-grid">
-      <div class="form-intro">
-        <h2 id="careers-title" class="t-title" data-reveal>Bolsa de trabajo</h2>
-        <p class="t-lead" data-reveal style="--i: 1">Buscamos personas que quieran trabajar donde la precisión, el conocimiento técnico y la tecnología importan.</p>
-        <p class="openings" data-reveal style="--i: 2"><span class="openings-dot" aria-hidden="true"></span>No hay vacantes publicadas en este momento. Las oportunidades se anunciarán en esta sección; mientras tanto, puede preparar su candidatura.</p>
-      </div>
-      <form class="form" name="candidatura" method="POST" enctype="multipart/form-data" novalidate
-        data-netlify={RECEPCION_ACTIVA ? 'true' : undefined} netlify-honeypot={RECEPCION_ACTIVA ? 'sitio-web' : undefined}
-        data-reception={RECEPCION_ACTIVA ? 'on' : 'off'}
-        data-pending-title="Candidatura completa, sin enviar."
-        data-pending-body="La recepción de candidaturas se habilitará próximamente. Sus datos y su CV no se enviaron ni se almacenaron: el archivo nunca salió de este dispositivo."
-        data-ok-text="Candidatura enviada. FIARIL recibió su candidatura.">
-        <input type="hidden" name="form-name" value="candidatura" />
-        <p class="trap" aria-hidden="true"><label>No llenar este campo <input name="sitio-web" tabindex="-1" autocomplete="off" /></label></p>
-        <div class="field"><label for="c-nombre">Nombre completo</label><input id="c-nombre" name="nombre" autocomplete="name" required aria-describedby="c-e-nombre" /><p class="error" id="c-e-nombre" data-msg="Indique su nombre completo."></p></div>
-        <div class="field"><label for="c-correo">Correo electrónico</label><input id="c-correo" name="correo" type="email" autocomplete="email" spellcheck="false" required placeholder="nombre@correo.com" aria-describedby="c-e-correo" /><p class="error" id="c-e-correo" data-msg="Indique un correo válido, por ejemplo nombre@correo.com."></p></div>
-        <div class="field"><label for="c-telefono">Teléfono <span class="optional">(opcional)</span></label><input id="c-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" /></div>
-        <div class="field"><label for="c-area">Área de interés</label><input id="c-area" name="area" required aria-describedby="c-e-area" /><p class="error" id="c-e-area" data-msg="Indique en qué área le gustaría colaborar."></p></div>
-        <div class="field wide"><label for="c-mensaje">Mensaje breve</label><textarea id="c-mensaje" name="mensaje" rows="4" maxlength="600" required aria-describedby="c-h-mensaje c-e-mensaje"></textarea><p class="help" id="c-h-mensaje">Hasta 600 caracteres: su experiencia y qué le interesa de FIARIL.</p><p class="error" id="c-e-mensaje" data-msg="Escriba un mensaje breve."></p></div>
-        <div class="field wide">
-          <span class="field-label" id="c-l-cv">CV en PDF</span>
-          <div class="file">
-            <input id="c-cv" name="cv" type="file" accept="application/pdf,.pdf" required data-max-bytes={CV_MAX_MB * 1048576} aria-labelledby="c-l-cv" aria-describedby="c-h-cv c-e-cv" />
-            <div class="file-zone" aria-hidden="true"><span class="file-button">Seleccionar PDF</span><span class="file-name">Ningún archivo seleccionado</span></div>
-          </div>
-          <p class="help" id="c-h-cv">Formato PDF, máximo {CV_MAX_MB} MB.</p>
-          <p class="error" id="c-e-cv" data-msg="Adjunte su CV en PDF." data-msg-type="El archivo debe ser un PDF." data-msg-size={`El archivo supera ${CV_MAX_MB} MB. Adjunte una versión más ligera.`}></p>
-        </div>
-        <div class="field wide check"><input id="c-privacidad" name="privacidad" type="checkbox" value="aceptado" required aria-describedby="c-e-privacidad" /><label for="c-privacidad">He leído el <a href="/privacidad/">aviso de privacidad</a>.</label><p class="error" id="c-e-privacidad" data-msg="Confirme que ha leído el aviso de privacidad."></p></div>
-        <div class="wide submit-row">
-          <button class="btn" type="submit">Enviar candidatura</button>
-          {!RECEPCION_ACTIVA && <p class="reception"><span class="reception-dot" aria-hidden="true"></span>Recepción de candidaturas en preparación: su CV no saldrá de este dispositivo.</p>}
-        </div>
-        <div class="wide status" role="status" aria-live="polite" tabindex="-1"></div>
-      </form>
     </div>
   </section>
 </Base>
@@ -218,7 +134,7 @@ const lines = [
 <script>
   import field from '../lab/f05-precision-field';
   import type { Rect } from '../lab/f05-precision-field';
-  import { initForms } from '../scripts/forms';
+  import surgicalField from '../scripts/surgical-field';
 
   // ---------- Hero field (F05) ----------
   const hero = document.querySelector<HTMLElement>('.hero')!;
@@ -233,7 +149,7 @@ const lines = [
       const [l, t, r, b] = rect(stageEl), w = r - l, h = b - t;
       return { cx: l + w / 2, cy: t + h / 2, size: Math.max(60, Math.min(w / 3.3, h / 3.2)) };
     },
-    holes: () => [...document.querySelectorAll('.hero [data-clear]:not([hidden]), .site-header .shell :is(.brand, .nav, .cta, .menu-btn)')].map((el) => rect(el, 10)),
+    holes: () => [...document.querySelectorAll('.hero [data-clear]:not([hidden]), .site-header .bar :is(.brand, .brand-full, .nav, .cta, .menu-btn)')].map((el) => rect(el, 10)),
   });
   document.fonts.ready.then(() => control.refresh());
   hero.querySelector('.hero-foot')!.addEventListener('animationend', () => control.refresh(), { once: true });
@@ -268,33 +184,17 @@ const lines = [
       vcanvas.setAttribute('aria-label', `Visualización 3D conceptual de ${names[m]}.`);
     }));
     viewerEl.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => { press('data-view', b); viewer.setWire(b.dataset.view === 'geometry'); }));
-    const pause = viewerEl.querySelector<HTMLButtonElement>('.viewer-pause')!;
-    if (viewer.animated) {
-      let p = false; pause.hidden = false;
-      pause.addEventListener('click', () => { p = !p; viewer.setPaused(p); pause.textContent = p ? 'Reanudar rotación' : 'Pausar rotación'; });
-    }
   }, { rootMargin: '600px 0px' });
   lazy3d.observe(viewerEl);
 
-  // ---------- Surgical lamp (fine pointers only) ----------
+  // ---------- Surgical lamp field (Acompañamiento) ----------
   const care = document.querySelector<HTMLElement>('.care')!;
-  const lamp = care.querySelector<HTMLElement>('.lamp')!;
-  let lampFrame = 0;
-  care.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse' || lampFrame) return;
-    lampFrame = requestAnimationFrame(() => {
-      lampFrame = 0;
-      const b = lamp.getBoundingClientRect();
-      lamp.style.setProperty('--lx', `${Math.min(100, Math.max(0, ((e.clientX - b.left) / b.width) * 100))}%`);
-      lamp.style.setProperty('--ly', `${Math.min(100, Math.max(0, ((e.clientY - b.top) / b.height) * 100))}%`);
-    });
-  });
-  care.addEventListener('pointerleave', () => { lamp.style.removeProperty('--lx'); lamp.style.removeProperty('--ly'); });
-
-  // ---------- Forms ----------
-  initForms();
-  const interes = document.querySelector<HTMLSelectElement>('#q-interes')!;
-  document.querySelectorAll<HTMLAnchorElement>('a[data-interes]').forEach((a) => a.addEventListener('click', () => { interes.value = a.dataset.interes!; }));
+  const careCanvas = care.querySelector<HTMLCanvasElement>('.care-field')!;
+  const lamp = surgicalField(careCanvas, () => [...care.querySelectorAll('.care-grid :is(h2, p, .btn)')].map((el) => {
+    const c = careCanvas.getBoundingClientRect(), r = el.getBoundingClientRect();
+    return [r.left - c.left, r.top - c.top, r.right - c.left, r.bottom - c.top] as [number, number, number, number];
+  }));
+  document.fonts.ready.then(() => lamp.refresh());
 </script>
 
 <style>
@@ -312,15 +212,15 @@ const lines = [
   .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-l); width: fit-content; }
   .hero-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-s); }
   .signature { margin: 0; font-size: var(--type-meta); font-weight: var(--weight-heading); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); }
-  .field-toggle, .viewer-pause, .seg button {
+  .field-toggle, .seg button {
     min-height: 44px; padding: 0 1em; border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius-pill);
     background: transparent; color: var(--color-text); font: var(--weight-ui) var(--type-meta) / 1 var(--font-sans);
     cursor: pointer; touch-action: manipulation;
     transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out), border-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
   }
   .field-toggle { background: var(--color-surface); }
-  :is(.field-toggle, .viewer-pause, .seg button):active { transform: scale(var(--press-scale)); }
-  @media (hover: hover) and (pointer: fine) { :is(.field-toggle, .viewer-pause):hover { border-color: var(--color-text); } }
+  :is(.field-toggle, .seg button):active { transform: scale(var(--press-scale)); }
+  @media (hover: hover) and (pointer: fine) { .field-toggle:hover { border-color: var(--color-text); } }
   @media (min-width: 64em), (orientation: landscape) and (min-width: 40em) and (max-height: 34em) {
     .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: 1fr auto; column-gap: var(--gutter); }
     .hero-copy { grid-area: 1 / 1; align-self: center; }
@@ -396,38 +296,22 @@ const lines = [
   .seg button { border-color: transparent; color: var(--color-text-muted); }
   .seg button[aria-pressed='true'] { background: var(--color-primary); color: var(--color-on-primary); }
   @media (hover: hover) and (pointer: fine) { .seg button[aria-pressed='false']:hover { color: var(--color-text); } }
-  .viewer-pause { margin-left: auto; }
   .tech-frame { aspect-ratio: 3 / 5; max-height: 70svh; }
   .tech-xray { width: min(100%, 24rem); justify-self: center; }
 
   /* ============ Acompañamiento (navy, surgical lamp) ============ */
-  @property --lx { syntax: '<percentage>'; inherits: false; initial-value: 62%; }
-  @property --ly { syntax: '<percentage>'; inherits: false; initial-value: 42%; }
   .care { position: relative; overflow: clip; display: grid; min-height: min(52rem, 88svh); }
-  .lamp {
-    position: absolute; inset: 0 0 45% 0; pointer-events: none;
-    background:
-      radial-gradient(circle, rgba(247, 247, 247, 0.92) 1.5px, transparent 2.1px) 0 0 / 14px 14px,
-      radial-gradient(circle, rgba(247, 247, 247, 0.32) 0.8px, transparent 1.2px) 7px 7px / 14px 14px;
-    -webkit-mask-image: radial-gradient(circle at var(--lx) var(--ly), #000 0, rgba(0, 0, 0, 0.45) 16%, rgba(0, 0, 0, 0.08) 34%, transparent 52%);
-    mask-image: radial-gradient(circle at var(--lx) var(--ly), #000 0, rgba(0, 0, 0, 0.45) 16%, rgba(0, 0, 0, 0.08) 34%, transparent 52%);
-    transition: --lx 900ms var(--ease-out), --ly 900ms var(--ease-out);
-  }
+  .care-field { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
+  /* legibility without a hole: a soft navy veil behind the copy column; dots stay visible through it */
+  .care::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, color-mix(in srgb, var(--orbital-navy) 38%, transparent), transparent 58%); }
+  .care-grid { pointer-events: none; z-index: 1; }
+  .care-grid :is(a, button) { pointer-events: auto; }
   .care-grid { position: relative; display: grid; gap: var(--space-l); align-self: end; }
   .care .t-title { max-width: 14ch; }
   .care-body { display: grid; gap: var(--space-m); justify-items: start; }
   @media (min-width: 64em) {
-    .lamp { inset: 0 0 0 45%; }
     .care-grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: var(--gutter); align-self: center; }
     .care-body { grid-column: 1; }
   }
 
-  /* ============ Forms (contact + careers share one layout) ============ */
-  .form-grid { display: grid; gap: var(--space-l); }
-  @media (min-width: 64em) { .form-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); align-items: start; } }
-  .form-intro { display: grid; gap: var(--space-m); align-content: start; }
-  @media (min-width: 64em) { .form-intro { position: sticky; top: calc(var(--header-h) + var(--space-l)); } }
-  .ruler-wrap { padding-top: var(--space-s); }
-  .openings { display: flex; gap: 0.7em; align-items: baseline; margin: 0; padding: var(--space-s) var(--space-m); border: var(--border-width) solid var(--color-border-control); border-radius: var(--radius); background: var(--color-surface-raised); font-size: var(--type-meta); color: var(--color-text-muted); max-width: 44ch; }
-  .openings-dot { flex: none; align-self: flex-start; margin-top: 0.4em; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); }
 </style>

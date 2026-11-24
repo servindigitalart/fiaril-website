@@ -36,13 +36,26 @@ function setup(form: HTMLFormElement) {
   const controls = [...form.querySelectorAll<Control>('[required], input[type="file"]')];
 
   // the file zone names the chosen file
+  // a CTA can preselect the line of interest across pages: /cotizacion/?interes=implantes
+  const interest = form.querySelector<HTMLSelectElement>('select[name="interes"]');
+  const wanted = new URLSearchParams(location.search).get('interes');
+  if (interest && wanted && [...interest.options].some((o) => o.value === wanted)) interest.value = wanted;
+
   form.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
-    const name = input.closest('.file')?.querySelector('.file-name');
+    const field = input.closest('.field');
+    const name = field?.querySelector('.file-name');
+    const remove = field?.querySelector<HTMLButtonElement>('.file-remove');
     const empty = name?.textContent ?? '';
+    remove?.addEventListener('click', () => {
+      input.value = '';
+      input.dispatchEvent(new Event('change'));
+      input.focus();
+    });
     input.addEventListener('change', () => {
       const f = input.files?.[0];
+      if (remove) remove.hidden = !f;
       if (name) name.textContent = f ? `${f.name} · ${f.size < 1048576 ? `${Math.max(1, Math.round(f.size / 1024))} KB` : `${mb.format(f.size / 1048576)} MB`}` : empty;
-      check(input);
+      if (f || input.hasAttribute('aria-invalid')) check(input); // removing a file is not an error yet
     });
   });
 

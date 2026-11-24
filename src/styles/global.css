@@ -105,7 +105,7 @@
   --press-scale: 0.97;
 
   /* ---------- Chrome ---------- */
-  --header-h: 4.25rem; /* floating pill: 3.5rem + 10px offset */
+  --header-h: 4rem;
 }
 
 @media (min-width: 40em) { :root { --grid-columns: 6; } }

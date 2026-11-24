@@ -243,8 +243,8 @@ Los componentes consumen solo tokens semánticos (`--color-*`, `--space-*`, `--d
 - **Favicon:** a 16 px el isotipo pierde legibilidad y en pestañas oscuras las órbitas navy desaparecen. Son limitaciones del activo aprobado y se documentan, no se corrigen redibujando.
 - **Calidad del activo:** el canal alpha de `new-logo.png` tiene píxeles casi transparentes dispersos por el lienzo (polvo de recorte). Es invisible sobre fondos claros, pero cualquier tratamiento que amplifique el alpha lo haría visible.
 
-### Navigation (`src/components/SiteHeader.astro`, V2: D-041)
-Transparente en el hero con el logo completo; al hacer scroll, **pastilla flotante**: navy sobre superficies claras y mineral sobre oscuras (tono detectado con IntersectionObserver). El isotipo siempre va sobre un disco mineral. La descripción de V1 sigue a continuación como referencia.
+### Navigation (`src/components/SiteHeader.astro`, V2.1: D-047)
+**Una sola geometría**: barra de ancho completo de 64 px en todos los estados, nunca una pastilla. Arriba (home): transparente, con el logo completo colgando de la barra. Con scroll: el logo se funde con el isotipo (disco mineral) y la barra toma navy sobre superficies claras y mineral sobre oscuras. Bolsa de trabajo vive en el menú móvil y en el footer; el CTA principal lleva a `/cotizacion/`.
 
 Barra fija de `--header-h` (4 rem) con el isotipo. En la home y en escritorio arranca en estado **top**: transparente sobre el hero y con el logo completo a 136 px. A partir de 48 px de scroll pasa a **compact**: superficie sólida, línea fina e isotipo. La sección activa se marca con un punto en `--color-accent` («estás aquí»). Por debajo de 64 em, botón «Menú» que abre un `<dialog>` modal (Esc y clic en el fondo cierran; el foco vuelve al botón) con enlaces a peso 300. El CTA «Solicitar cotización» está siempre visible, salvo por debajo de 376 px.
 
@@ -278,7 +278,7 @@ Contorno rojo discontinuo (`.pending`) en todo contenido provisional. Es visible
 - **Do** usar `--color-accent` y `--color-focus` en lugar de rojo o amarillo directos, para que la superficie decida (The Surface Swap Rule).
 - **Do** reservar `.display` para una sola frase por página.
 - **Do** apoyar todo texto sobre un plano sólido de la superficie.
-- **Do** dar a cada animación autónoma de más de 5 s un control de pausa y un estado estático.
+- **Do** dar a cada animación autónoma de más de 5 s un control de pausa y un estado estático. Excepción del cliente (D-049): el visor 3D y el campo de Acompañamiento no muestran pausa; mantienen el estado estático con movimiento reducido y se detienen fuera de pantalla.
 - **Do** marcar con `.pending` todo dato no confirmado por FIARIL.
 - **Do** mostrar el logo solo sobre superficies claras y a una altura de contenido de al menos unos 136 px; por debajo, el isotipo.
 

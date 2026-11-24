@@ -1,40 +1,38 @@
 ---
-// Contextual header (docs/14 §9).
-// top  : home only, transparent over the hero, full approved logo (≥136px, DESIGN.md › Logo).
-// pill : floating compact pill. Tone follows the surface underneath: "ink" (navy pill) over light
-//        surfaces, "paper" (mineral pill) over dark ones. The isotype always sits on a mineral disc:
-//        there is no negative logo (D-018).
+// Header V2.1 (D-047). One geometry, always: a full-width bar of --header-h. Only colour and logo change.
+// top (home, at scroll 0): transparent; the full approved logo hangs from the bar (desktop).
+// bar: tone follows the surface underneath. "ink" = navy bar over light surfaces, "paper" = mineral
+//      bar over dark ones. The isotype sits on a mineral disc: there is no negative logo (D-018).
+// Both logos are absolutely positioned inside a fixed-size brand box, so swapping them cannot shift layout.
 import { Image } from 'astro:assets';
 import logo from '../assets/logo-fiaril-full.png';
 import isotype from '../assets/isotype.png';
 
 interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
+const path = Astro.url.pathname;
 
 const links = [
   { href: '/#especialidades', label: 'Especialidades', id: 'especialidades' },
   { href: '/#tecnologia', label: 'Tecnología', id: 'tecnologia' },
   { href: '/#acompanamiento', label: 'Acompañamiento', id: 'acompanamiento' },
-  { href: '/#bolsa-de-trabajo', label: 'Bolsa de trabajo', id: 'bolsa-de-trabajo' },
 ];
 const menu = [
   { href: '/#nosotros', label: 'Nosotros' },
   ...links,
-  { href: '/#contacto', label: 'Contacto' },
+  { href: '/bolsa-de-trabajo/', label: 'Bolsa de trabajo' },
 ];
 ---
-<header class="site-header" data-overlay={overlay ? '' : undefined} data-state={overlay ? 'top' : 'pill'} data-tone="ink">
-  <div class="shell">
+<header class="site-header" data-overlay={overlay ? '' : undefined} data-state={overlay ? 'top' : 'bar'} data-tone="ink">
+  <div class="wrap bar">
     <a class="brand" href="/" aria-label="FIARIL Orthopedics, inicio" translate="no">
       {overlay && <Image class="brand-full" src={logo} alt="" height={136} densities={[1, 2]} loading="eager" fetchpriority="high" />}
-      <span class="chip"><Image class="brand-iso" src={isotype} alt="" height={30} densities={[1, 2]} loading="eager" /></span>
+      <span class="chip"><Image src={isotype} alt="" height={30} densities={[1, 2]} loading="eager" /></span>
     </a>
     <nav class="nav" aria-label="Principal">
-      <ul>
-        {links.map((l) => <li><a href={l.href} data-section={l.id}>{l.label}</a></li>)}
-      </ul>
+      <ul>{links.map((l) => <li><a href={l.href} data-section={l.id}>{l.label}</a></li>)}</ul>
     </nav>
-    <a class="cta" href="/#contacto">Solicitar cotización</a>
+    <a class="cta" href="/cotizacion/" aria-current={path.startsWith('/cotizacion') ? 'page' : undefined}>Solicitar cotización</a>
     <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="site-menu">Menú</button>
   </div>
 
@@ -44,49 +42,50 @@ const menu = [
       <button class="menu-close" type="button">Cerrar</button>
     </div>
     <nav aria-label="Menú móvil">
-      <ul>{menu.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      <ul>{menu.map((l) => <li><a href={l.href} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a></li>)}</ul>
     </nav>
-    <a class="btn sheet-cta" href="/#contacto">Solicitar cotización</a>
+    <a class="btn sheet-cta" href="/cotizacion/">Solicitar cotización</a>
   </dialog>
 </header>
 
 <style>
   .site-header {
-    position: fixed; inset: 0 0 auto; z-index: var(--z-header);
-    padding: 10px var(--gutter) 0;
-    pointer-events: none; /* the band around the pill never blocks the page */
-  }
-  .shell {
-    pointer-events: auto;
-    display: flex; align-items: center; gap: var(--space-m);
-    width: min(100%, 76rem); margin-inline: auto; height: 3.5rem;
-    padding: 0 0.4rem 0 0.4rem; border-radius: var(--radius-pill);
+    position: fixed; inset: 0 0 auto; z-index: var(--z-header); height: var(--header-h);
     background: var(--orbital-navy); color: var(--mineral);
-    box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--orbital-navy) 55%, transparent);
-    transition: background-color var(--dur-panel) var(--ease-out), color var(--dur-panel) var(--ease-out),
-      box-shadow var(--dur-panel) var(--ease-out), width var(--dur-panel) var(--ease-out), height var(--dur-panel) var(--ease-out), padding var(--dur-panel) var(--ease-out);
+    box-shadow: 0 var(--border-width) 0 color-mix(in srgb, var(--mineral) 12%, transparent);
+    transition: background-color var(--dur-panel) var(--ease-out), color var(--dur-panel) var(--ease-out), box-shadow var(--dur-panel) var(--ease-out);
     --accent: var(--energy-yellow);
     --muted: color-mix(in srgb, var(--mineral) 72%, var(--orbital-navy));
     --cta-bg: var(--mineral); --cta-fg: var(--orbital-navy);
   }
-  .site-header[data-tone='paper'] .shell {
-    background: var(--mineral); color: var(--orbital-navy);
-    box-shadow: 0 10px 30px -16px rgb(0 0 0 / 0.55);
-    --accent: var(--signal-red); --muted: var(--color-text-muted);
-    --cta-bg: var(--orbital-navy); --cta-fg: var(--white);
+  .site-header[data-tone='paper'] {
+    background: var(--mineral); color: var(--orbital-navy); box-shadow: 0 var(--border-width) 0 var(--color-border);
+    --accent: var(--signal-red); --muted: var(--color-text-muted); --cta-bg: var(--orbital-navy); --cta-fg: var(--white);
   }
-  .shell :focus-visible { outline-color: var(--accent); }
+  .site-header[data-state='top'] {
+    background: transparent; color: var(--orbital-navy); box-shadow: none;
+    --accent: var(--signal-red); --muted: var(--color-text-muted); --cta-bg: var(--orbital-navy); --cta-fg: var(--white);
+  }
+  .site-header :focus-visible { outline-color: var(--accent); }
 
-  .brand { display: flex; align-items: center; flex: none; margin-right: auto; border-radius: var(--radius-pill); }
-  .chip { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--mineral); }
+  .bar { display: flex; align-items: center; gap: var(--space-m); height: 100%; }
+  .brand { position: relative; flex: none; width: 44px; height: 44px; margin-right: auto; border-radius: 50%; }
+  .chip {
+    position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; background: var(--mineral);
+    transition: opacity var(--dur-panel) var(--ease-out), transform var(--dur-panel) var(--ease-out);
+  }
   .chip :global(img) { height: 30px; width: auto; }
-  .brand-full { display: none; }
+  .brand-full {
+    position: absolute; left: 0; top: -4px; height: 136px; width: auto; max-width: none;
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity var(--dur-panel) var(--ease-out), transform var(--dur-panel) var(--ease-out);
+  }
 
   .nav ul { display: flex; gap: var(--space-m); list-style: none; margin: 0; padding: 0; }
   .nav a {
     position: relative; display: inline-flex; align-items: center; min-height: 44px;
-    font-size: var(--type-meta); font-weight: var(--weight-ui); text-decoration: none;
-    color: var(--muted); transition: color var(--dur-hover) var(--ease-out);
+    font-size: var(--type-meta); font-weight: var(--weight-ui); text-decoration: none; color: var(--muted);
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .nav a::before {
     content: ''; position: absolute; left: -0.7em; top: 50%; width: 5px; height: 5px; margin-top: -2.5px;
@@ -97,56 +96,47 @@ const menu = [
   @media (hover: hover) and (pointer: fine) { .nav a:hover { color: inherit; } }
 
   .cta {
-    flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.25em;
-    border-radius: var(--radius-pill); background: var(--cta-bg); color: var(--cta-fg);
-    font-size: var(--type-meta); font-weight: var(--weight-ui); text-decoration: none; touch-action: manipulation;
+    flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.25em; border-radius: var(--radius-pill);
+    background: var(--cta-bg); color: var(--cta-fg); font-size: var(--type-meta); font-weight: var(--weight-ui); text-decoration: none; touch-action: manipulation;
     transition: background-color var(--dur-panel) var(--ease-out), color var(--dur-panel) var(--ease-out), transform var(--dur-press) var(--ease-out);
   }
+  .cta[aria-current='page'] { box-shadow: 0 0 0 2px var(--accent); }
   .cta:active, .menu-btn:active, .menu-close:active { transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .cta:hover { background: var(--accent); color: var(--orbital-navy); } }
-
   .menu-btn, .menu-close {
-    min-height: 44px; padding: 0 1.05em; border-radius: var(--radius-pill);
-    border: var(--border-width) solid color-mix(in srgb, currentColor 40%, transparent); background: transparent; color: inherit;
-    font: var(--weight-ui) var(--type-meta) / 1 var(--font-sans); cursor: pointer; touch-action: manipulation;
+    min-height: 44px; padding: 0 1.05em; border-radius: var(--radius-pill); border: var(--border-width) solid color-mix(in srgb, currentColor 40%, transparent);
+    background: transparent; color: inherit; font: var(--weight-ui) var(--type-meta) / 1 var(--font-sans); cursor: pointer; touch-action: manipulation;
     transition: transform var(--dur-press) var(--ease-out);
   }
-
   .nav { display: none; }
   @media (max-width: 23.5em) { .cta { display: none; } }
-  @media (min-width: 64em) { .nav { display: block; } .menu-btn { display: none; } .shell { padding-right: 0.4rem; } }
-
-  /* top state over the home hero: transparent, full logo (desktop), no pill */
-  .site-header[data-state='top'] .shell { background: transparent; color: var(--orbital-navy); box-shadow: none; --muted: var(--color-text-muted); --cta-bg: var(--orbital-navy); --cta-fg: var(--white); --accent: var(--signal-red); }
   @media (min-width: 64em) {
-    .site-header[data-state='top'] .shell { width: min(100%, var(--max-width)); height: calc(136px + var(--space-m)); align-items: flex-start; padding: var(--space-xs) 0 0; }
-    .site-header[data-state='top'] .brand-full { display: block; height: 136px; width: auto; }
-    .site-header[data-state='top'] .chip { display: none; }
-    .site-header[data-state='top'] :is(.nav, .cta) { margin-top: 0.4rem; }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .brand-full { animation: fade-in var(--dur-reveal) var(--ease-out) both; }
-    .site-header[data-state='pill'] .chip { animation: fade-in var(--dur-ui) var(--ease-out) both; }
-    @keyframes fade-in { from { opacity: 0; } }
+    .nav { display: block; }
+    .menu-btn { display: none; }
+    /* top state: the full logo replaces the isotype, same bar geometry */
+    .site-header[data-state='top'] .brand-full { opacity: 1; transform: none; pointer-events: auto; }
+    .site-header[data-state='top'] .chip { opacity: 0; transform: scale(0.9); }
   }
 
   /* mobile sheet */
   .sheet {
-    width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 10px var(--gutter) var(--space-l);
+    width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0 var(--gutter) var(--space-l);
     border: 0; background: var(--orbital-navy); color: var(--mineral); display: none; flex-direction: column;
   }
   .sheet[open] { display: flex; }
   .sheet::backdrop { background: rgb(0 0 0 / 0.3); }
-  .sheet-head { display: flex; align-items: center; justify-content: space-between; height: 3.5rem; flex: none; padding-left: 0.4rem; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); flex: none; }
+  .sheet-head .chip { position: static; width: 44px; height: 44px; }
   .sheet nav { flex: 1; display: flex; align-items: center; }
   .sheet ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2xs); }
   .sheet nav a { display: block; padding-block: 0.1em; text-decoration: none; font-size: var(--type-subtitle); font-weight: var(--weight-body); letter-spacing: -0.025em; line-height: 1.15; }
+  .sheet nav a[aria-current='page'] { color: var(--energy-yellow); }
   .sheet :focus-visible { outline-color: var(--energy-yellow); }
   .sheet-cta { align-self: flex-start; --color-primary: var(--mineral); --color-on-primary: var(--orbital-navy); }
   @media (prefers-reduced-motion: no-preference) {
     .sheet[open] { animation: sheet-in var(--dur-panel) var(--ease-drawer) both; }
     .sheet[open] li { animation: sheet-in var(--dur-panel) var(--ease-out) both; animation-delay: calc(60ms + var(--n, 0) * 35ms); }
-    .sheet li:nth-child(2) { --n: 1; } .sheet li:nth-child(3) { --n: 2; } .sheet li:nth-child(4) { --n: 3; } .sheet li:nth-child(5) { --n: 4; } .sheet li:nth-child(6) { --n: 5; }
+    .sheet li:nth-child(2) { --n: 1; } .sheet li:nth-child(3) { --n: 2; } .sheet li:nth-child(4) { --n: 3; } .sheet li:nth-child(5) { --n: 4; }
     @keyframes sheet-in { from { opacity: 0; transform: translateY(-10px); } }
   }
 </style>
@@ -155,28 +145,25 @@ const menu = [
   const header = document.querySelector<HTMLElement>('.site-header')!;
   const sheet = document.querySelector<HTMLDialogElement>('#site-menu')!;
   const openBtn = header.querySelector<HTMLButtonElement>('.menu-btn')!;
-
   openBtn.addEventListener('click', () => sheet.showModal());
   sheet.querySelector('.menu-close')!.addEventListener('click', () => sheet.close());
   sheet.addEventListener('click', (e) => { if ((e.target as Element).closest('a') || e.target === sheet) sheet.close(); });
   sheet.addEventListener('close', () => openBtn.focus());
 
-  // top -> pill on the home page once the hero starts to scroll
+  // top -> bar once the home hero starts to scroll
   if (header.hasAttribute('data-overlay')) {
     const sentinel = Object.assign(document.createElement('div'), { ariaHidden: 'true' });
     sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:48px;pointer-events:none';
     document.body.prepend(sentinel);
-    new IntersectionObserver(([e]) => (header.dataset.state = e.isIntersecting ? 'top' : 'pill')).observe(sentinel);
+    new IntersectionObserver(([e]) => (header.dataset.state = e.isIntersecting ? 'top' : 'bar')).observe(sentinel);
   }
 
-  // tone follows the surface under the pill: a thin observation band at the pill's height
+  // tone follows the surface under the bar (a thin observation band at its height)
   const surfaces = [...document.querySelectorAll<HTMLElement>('[data-surface]')];
-  if (surfaces.length) {
-    const tone = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) header.dataset.tone = /navy|graphite/.test((e.target as HTMLElement).dataset.surface!) ? 'paper' : 'ink';
-    }, { rootMargin: '-26px 0px -90% 0px' });
-    surfaces.forEach((s) => tone.observe(s));
-  }
+  const tone = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) header.dataset.tone = /navy|graphite/.test((e.target as HTMLElement).dataset.surface!) ? 'paper' : 'ink';
+  }, { rootMargin: '-26px 0px -90% 0px' });
+  surfaces.forEach((s) => tone.observe(s));
 
   // "you are here"
   const navLinks = [...header.querySelectorAll<HTMLAnchorElement>('.nav a[data-section]')];

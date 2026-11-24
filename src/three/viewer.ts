@@ -1,10 +1,16 @@
-// Live conceptual 3D viewer (docs/14 §7). Lazy-loaded by the home page when its section approaches.
-// One rAF loop, only while visible and not paused; a single frame under reduced motion.
-import { Group } from 'three';
+// Live conceptual 3D viewer (docs/14 §7, V2.1 D-049). Lazy-loaded when its section approaches.
+// Choreography: the camera stays still; the object travels a slow lemniscate (Gerono figure-eight)
+// with a little depth, and its orientation follows the path tangent — a product being presented,
+// not a spinning toy. Cursor tilt and touch drag are added on top with damping.
+// No visible pause control (D-049). Internally: one rAF loop only while visible and the tab is shown;
+// reduced motion = a static pose that still answers to manual drag.
+import { Box3, Group, Vector3 } from 'three';
 import { createStudio, frame, wireframe } from './studio';
 import { materials, MODELS, type ModelName } from './models';
 
-export interface Viewer { animated: boolean; show(name: ModelName): void; setWire(on: boolean): void; setPaused(p: boolean): void }
+export interface Viewer { animated: boolean; show(name: ModelName): void; setWire(on: boolean): void }
+
+const PERIOD = 20; // seconds per figure-eight
 
 export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): Viewer | null {
   let studio;
@@ -14,46 +20,58 @@ export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): View
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mats = materials();
   const cache = new Map<ModelName, Group>();
-  const pivot = new Group(); scene.add(pivot);
-  let current: Group | null = null, wire = false, paused = false, visible = false, raf = 0, last = 0;
-  let yaw = 0, tiltX = 0, tiltY = 0, targetX = 0, targetY = 0, drag = 0, dragFrom = 0;
+  const orbit = new Group(); // travels the lemniscate
+  const pivot = new Group(); // orientation (path tangent + cursor + drag)
+  orbit.add(pivot); scene.add(orbit);
+  const size = new Vector3();
+  let current: Group | null = null, wire = false, visible = false, raf = 0, last = 0, t = 0, amp = 0.1;
+  let tiltX = 0, tiltY = 0, targetX = 0, targetY = 0, drag = 0, dragV = 0, dragFrom = 0, dragging = false;
 
+  const pose = () => {
+    const s = (t / PERIOD) * Math.PI * 2, sin = Math.sin(s), cos = Math.cos(s);
+    orbit.position.set(amp * sin, amp * 0.5 * Math.sin(2 * s), amp * 0.35 * cos); // Gerono lemniscate + depth
+    // orientation follows the tangent (dx = cos, dy = cos 2s), kept small and smooth
+    pivot.rotation.set(0.1 * Math.cos(2 * s) + tiltY, -0.35 + 0.32 * cos + tiltX + drag, -0.06 * Math.cos(2 * s));
+  };
   const render = () => renderer.render(scene, camera);
   const fit = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h || !current) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    const r = pivot.rotation.clone(); pivot.rotation.set(0, 0, 0); // frame the model at rest
-    frame(camera, current, w < 520 ? 1 : 1.12); // bounding sphere overestimates thin parts: fill a little past 1
-    pivot.rotation.copy(r);
-    render();
+    orbit.position.set(0, 0, 0); pivot.rotation.set(0, 0, 0);
+    frame(camera, current, w < 520 ? 0.8 : 0.84); // room for the orbit's travel: the piece never leaves the frame
+    amp = current.userData.amp as number;
+    pose(); render();
   };
 
   const loop = (now: number) => {
     const dt = Math.min((now - last) / 1000, 0.05); last = now;
-    yaw += dt * 0.16; // very slow turntable
-    tiltX += (targetX - tiltX) * Math.min(1, dt * 4); // damped cursor tilt
-    tiltY += (targetY - tiltY) * Math.min(1, dt * 4);
-    pivot.rotation.set(tiltY, yaw + tiltX + drag, 0);
-    render();
+    t += dt;
+    const k = Math.min(1, dt * 3.5); // damped cursor response
+    tiltX += (targetX - tiltX) * k; tiltY += (targetY - tiltY) * k;
+    if (!dragging) { drag += dragV * dt; dragV *= Math.exp(-dt * 3); } // drag inertia settles
+    pose(); render();
     raf = requestAnimationFrame(loop);
   };
-  const start = () => { if (!raf && visible && !paused && !still && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } };
+  const start = () => { if (!raf && visible && !still && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } };
   const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
-  // fine pointer: tilt toward the cursor; touch: horizontal drag rotates, vertical scroll stays native
   canvas.addEventListener('pointermove', (e) => {
     if (e.pointerType === 'mouse') {
-      targetX = ((e.offsetX / canvas.clientWidth) - 0.5) * 0.7;
-      targetY = ((e.offsetY / canvas.clientHeight) - 0.5) * 0.3;
-    } else if (e.buttons) {
-      drag += (e.clientX - dragFrom) * 0.01; dragFrom = e.clientX;
-      if (still || paused) { pivot.rotation.y = yaw + drag; render(); }
+      targetX = (e.offsetX / canvas.clientWidth - 0.5) * 0.6;
+      targetY = (e.offsetY / canvas.clientHeight - 0.5) * 0.26;
+    } else if (dragging) {
+      const dx = (e.clientX - dragFrom) * 0.012; dragFrom = e.clientX;
+      drag += dx; dragV = dx * 30;
+      if (still) { pose(); render(); }
     }
   });
-  canvas.addEventListener('pointerdown', (e) => { dragFrom = e.clientX; });
-  canvas.addEventListener('pointerleave', () => { targetX = 0; targetY = 0; });
+  // touch-action: pan-y keeps vertical scrolling native; only horizontal drags reach us
+  canvas.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { dragging = true; dragFrom = e.clientX; } });
+  const end = () => { dragging = false; };
+  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
+  canvas.addEventListener('pointerleave', () => { targetX = 0; targetY = 0; end(); });
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); canvas.closest('.viewer')?.classList.remove('is-live'); });
 
   new ResizeObserver(fit).observe(canvas);
@@ -65,14 +83,17 @@ export function mountViewer(canvas: HTMLCanvasElement, initial: ModelName): View
     show(name) {
       if (current) pivot.remove(current);
       let g = cache.get(name);
-      if (!g) { g = MODELS[name](mats); cache.set(name, g); }
-      current = g;
+      if (!g) {
+        g = MODELS[name](mats); cache.set(name, g);
+        // orbit amplitude scales with the model: 8 % of its size, so every piece travels the same way
+        g.userData.amp = 0.08 * new Box3().setFromObject(g).getSize(size).length();
+      }
       wireframe(g, wire);
+      current = g;
       pivot.add(g);
       fit();
     },
     setWire(on) { wire = on; if (current) wireframe(current, on); render(); },
-    setPaused(p) { paused = p; p ? stop() : start(); },
   };
   viewer.show(initial);
   canvas.closest('.viewer')?.classList.add('is-live');
