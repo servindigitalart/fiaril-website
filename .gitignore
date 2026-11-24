@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+.DS_Store
+.env*
+# third-party reference material: local study only, never published
+references/
+
+# Local Python environments
+.venv/
+venv/

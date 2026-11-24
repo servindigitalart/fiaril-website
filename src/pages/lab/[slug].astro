@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import { experiments } from '../../lab/experiments';
+
+export const getStaticPaths = () => experiments.map((e) => ({ params: { slug: e.slug }, props: e }));
+const { slug, code, title, family, note, try: hint } = Astro.props;
+---
+<Base title={`${code} ${title} — FIARIL Creative Lab`}>
+  <section class="exp">
+    <canvas data-exp={slug} role="img" aria-label={`${title}: ${note}`}></canvas>
+    <div class="caption wrap">
+      <p class="label">{code} · {family}</p>
+      <h1>{title}</h1>
+      <p>{note}</p>
+      <p class="label">{hint}</p>
+      <p><a class="label" href="/lab/">← Volver al Lab</a></p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const loaders = {
+    'f01-dot-field': () => import('../../lab/f01-dot-field'),
+    'f02-chromatic-offset': () => import('../../lab/f02-chromatic-offset'),
+    'f03-living-anatomy': () => import('../../lab/f03-living-anatomy'),
+    'f04-cursor-waves': () => import('../../lab/f04-cursor-waves'),
+  };
+  const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-exp]')!;
+  loaders[canvas.dataset.exp as keyof typeof loaders]().then((m) => m.default(canvas));
+</script>
+
+<style>
+  .exp { position: relative; }
+  canvas { width: 100%; height: min(86svh, 900px); touch-action: pan-y; }
+  /* solid panel: text never sits on top of the dot field (legibility over effect) */
+  .caption { position: absolute; left: var(--gutter); bottom: var(--space-l); width: min(26rem, 100% - 2 * var(--gutter)); padding: var(--space-m); background: var(--color-surface); border: 1px solid var(--color-border); }
+  .caption h1 { font-size: var(--step-3); }
+  .caption p:last-child { margin: 0; }
+  @media (max-width: 640px) {
+    .caption { position: static; width: auto; border: 0; padding: var(--space-m) var(--gutter); }
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-fiaril.jpeg';
+
+interface Props { title: string; description?: string; }
+const { title, description = 'FIARIL Orthopedics — soluciones ortopédicas para el entorno hospitalario.' } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f7f7" />
+    <link rel="icon" href="data:," /><!-- ponytail: no favicon until FIARIL supplies a vector isotype -->
+    <meta name="robots" content="noindex" /><!-- pre-launch: remove when going to production -->
+  </head>
+  <body>
+    <header class="site-header wrap">
+      <a href="/" class="brand" aria-label="FIARIL Orthopedics — inicio">
+        <Image src={logo} alt="" width={120} loading="eager" />
+      </a>
+      <nav aria-label="Principal"><a class="label" href="/lab/">Creative Lab</a></nav>
+    </header>
+    <main><slot /></main>
+    <footer class="site-footer wrap label">
+      <span>FIARIL Orthopedics</span><span>Pre-producción · contenido pendiente de validación</span>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header, .site-footer { display: flex; justify-content: space-between; align-items: center; gap: var(--space-s); padding-block: var(--space-m); }
+  .site-footer { flex-wrap: wrap; border-top: 1px solid var(--color-border); margin-top: var(--space-xl); }
+  nav a { text-decoration: none; }
+</style>
