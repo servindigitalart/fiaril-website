@@ -2,6 +2,8 @@
 
 Fecha: 2026-11-24 · Decisiones: D-024 a D-030 · Estado: implementado y probado en local, **sin publicar**.
 
+> Actualizado por `13-excellence-sprint.md`: el formulario ya no hace POST y muestra el estado «recepción en preparación» (D-031).
+
 ## Qué se construyó
 
 | Área | Implementación |

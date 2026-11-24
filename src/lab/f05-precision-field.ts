@@ -19,7 +19,9 @@ const STEP = 1 / 60; // fixed solver step: propagation speed no longer depends o
 const FEATHER = 56;
 const INK = '#07253f', SIGNAL = '#b1282f', LATTICE = '#b9bfc7', NODE = '#72767f';
 
-export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): StageControl {
+export interface F05Control extends StageControl { /** Re-read the text boxes (fonts loaded, header changed, entrance ended). */ refresh(): void; }
+
+export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): F05Control {
   const rand = rng(29);
   const N = innerWidth < 640 ? 1900 : 3600;
   const P = new Float32Array(N * 3), Nn = new Float32Array(N * 3), orb = new Float32Array(N * 2);
@@ -42,8 +44,13 @@ export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): Stag
 
   // wave field (F04 solver) on a screen-space grid
   let cell = 12, cols = 0, rows = 0, h0 = new Float32Array(0), h1 = new Float32Array(0);
-  let LX = new Float32Array(0), LY = new Float32Array(0), LR = new Float32Array(0), LC = new Float32Array(0), ln = 0;
-  let focus: Focus = { cx: 0, cy: 0, size: 1 }, holes: Rect[] = [], frames = 0;
+  let LX = new Float32Array(0), LY = new Float32Array(0), LR = new Float32Array(0), LC = new Float32Array(0), LM = new Float32Array(0), ln = 0;
+  let focus: Focus = { cx: 0, cy: 0, size: 1 }, holes: Rect[] = [];
+  // orbit constants, so the per-particle loop allocates nothing
+  const OA = ORBITS.map((o) => o.a), OB = ORBITS.map((o) => o.b), OZ = ORBITS.map((o) => o.tz);
+  const OC = ORBITS.map((o) => Math.cos(o.tilt)), OS = ORBITS.map((o) => Math.sin(o.tilt));
+  let settled = 0; // time after which every particle has finished assembling
+  for (let i = 0; i < N; i++) settled = Math.max(settled, delay[i] + 2.2);
   let acc = 0, nextDrop = 1.6, drops = 0, lastX = -1e4, lastY = -1e4, taps = 0;
 
   const inject = (x: number, y: number, amount: number) => {
@@ -75,20 +82,24 @@ export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): Stag
     return m;
   };
 
-  return stage(canvas, {
+  // lattice clearance is static per layout: computed when the boxes change, not every frame
+  const buildMask = () => {
+    let li = 0;
+    for (let r = 0; r < rows; r += 2) for (let c = 0; c < cols; c += 2, li++) LM[li] = clearance(c * cell, r * cell);
+  };
+
+  const control = stage(canvas, {
     setup(w, h) {
       cell = w < 640 ? 11 : 12;
       cols = Math.ceil(w / cell) + 1; rows = Math.ceil(h / cell) + 1;
       h0 = new Float32Array(cols * rows); h1 = new Float32Array(cols * rows);
       ln = Math.ceil(cols / 2) * Math.ceil(rows / 2);
-      [LX, LY, LR, LC] = Array.from({ length: 4 }, () => new Float32Array(ln));
+      [LX, LY, LR, LC, LM] = Array.from({ length: 5 }, () => new Float32Array(ln));
       focus = opts.focus?.(w, h) ?? { cx: w * (w > 900 ? 0.62 : 0.5), cy: h * 0.5, size: Math.min(w / 3.4, h / 3.3) };
       holes = opts.holes?.() ?? [];
+      buildMask();
     },
     draw({ ctx, w, h, t, dt, pointer }) {
-      // text can reflow after fonts load: refresh the clearance boxes twice a second
-      if (opts.holes && ++frames % 30 === 0) holes = opts.holes();
-
       const yaw = -0.6 + Math.sin(t * 0.16) * 0.6, cy = Math.cos(yaw), sy = Math.sin(yaw);
       const scale = focus.size, cam = 4.5;
       const proj = (x: number, y: number, z: number) => {
@@ -119,7 +130,7 @@ export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): Stag
         const i = r * cols + c, v = h1[i];
         const gx = c > 0 && c < cols - 1 ? h1[i + 1] - h1[i - 1] : 0;
         const gy = r > 0 && r < rows - 1 ? h1[i + cols] - h1[i - cols] : 0;
-        const x = c * cell + gx * 3, y = r * cell + gy * 3, m = clearance(x, y);
+        const x = c * cell + gx * 3, y = r * cell + gy * 3, m = LM[li];
         LX[li] = x; LY[li] = y;
         const rad = (0.7 + Math.max(0, v) * 0.9) * m;
         LR[li] = v > 0.75 ? 0 : rad;
@@ -145,17 +156,24 @@ export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): Stag
         ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 6.2832); ctx.fill();
       });
 
-      // anatomy: assembles from the orbits, then the field passes through it
+      // anatomy: assembles from the orbits, then the field passes through it.
+      // Hot loop: no allocations; the orbit path is only evaluated while a particle is in transit.
+      const k3 = scale, all = t >= settled;
       for (let i = 0; i < n; i++) {
-        const i3 = i * 3, k = orb[i * 2], th = orb[i * 2 + 1] + t * (0.3 + k * 0.08);
-        const p = ease((t - delay[i]) / 2.2);
+        const i3 = i * 3;
+        const p = all ? 1 : ease((t - delay[i]) / 2.2);
         const breathe = 0.01 * Math.sin(t * 1.3 + P[i3 + 1] * 5) * p;
-        const [ax, ay, az] = orbit(k, th);
-        const jitter = (1 - p) * 0.12 * Math.sin(i * 12.9898 + t);
-        const x = ax + (P[i3] + Nn[i3] * breathe - ax) * p + jitter;
-        const y = ay + (P[i3 + 1] + Nn[i3 + 1] * breathe - ay) * p;
-        const z = az + (P[i3 + 2] + Nn[i3 + 2] * breathe - az) * p;
-        const [sx, sy2, f] = proj(x, y, z);
+        let x = P[i3] + Nn[i3] * breathe, y = P[i3 + 1] + Nn[i3 + 1] * breathe, z = P[i3 + 2] + Nn[i3 + 2] * breathe;
+        if (p < 1) {
+          const k = orb[i * 2], th = orb[i * 2 + 1] + t * (0.3 + k * 0.08);
+          const ct = Math.cos(th), st = Math.sin(th), ex = ct * OA[k], ey = st * OB[k];
+          const ax = ex * OC[k] - ey * OS[k], ay = ex * OS[k] + ey * OC[k], az = st * OZ[k];
+          x = ax + (x - ax) * p + (1 - p) * 0.12 * Math.sin(i * 12.9898 + t);
+          y = ay + (y - ay) * p;
+          z = az + (z - az) * p;
+        }
+        const rx = x * cy - z * sy, rz = x * sy + z * cy, f = cam / (cam - rz);
+        const sx = focus.cx + rx * k3 * f, sy2 = focus.cy - y * k3 * f;
 
         const g = at(sx, sy2), v = h1[g];
         const gx = h1[g + 1] - h1[g - 1], gy = h1[g + cols] - h1[g - cols];
@@ -163,7 +181,7 @@ export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): Stag
         const nx = Nn[i3] * cy - Nn[i3 + 2] * sy, nz = Nn[i3] * sy + Nn[i3 + 2] * cy;
         const lambert = Math.max(0, nx * L[0] + Nn[i3 + 1] * L[1] + nz * L[2]);
         const shade = (1 - lambert * 0.8) * (0.35 + 0.65 * Math.max(0, nz));
-        const r = (0.35 + 2.6 * (shade * p + 0.4 * (1 - p))) * f * (scale / 240) * (1 + Math.max(0, v) * 0.35) * (p < 1 ? 1 : fade[i]);
+        const r = (0.35 + 2.6 * (shade * p + 0.4 * (1 - p))) * f * (k3 / 240) * (1 + Math.max(0, v) * 0.35) * (p < 1 ? 1 : fade[i]);
         X[i] = sx + gx * 5; Y[i] = sy2 + gy * 5; // refraction along the slope
         const signal = p < 1 || v > 0.9; // in transit, or a crest is passing through
         Rn[i] = signal ? 0 : r;
@@ -173,4 +191,6 @@ export default function (canvas: HTMLCanvasElement, opts: F05Options = {}): Stag
       dots(ctx, X, Y, Rr, n, SIGNAL);
     },
   });
+
+  return { ...control, refresh() { if (opts.holes && rows) { holes = opts.holes(); buildMask(); } } };
 }

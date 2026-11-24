@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+// same hashed file the @fontsource CSS points to (Vite dedupes it): preloading it removes the font-swap layout shift
+import manrope from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
 
 interface Props {
   title: string;
@@ -25,6 +27,7 @@ const og = new URL('/og.png', Astro.site);
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f7f7f7" />
     <meta name="robots" content="noindex" /><!-- pre-launch (D-008): remove when the official domain goes live -->
+    <link rel="preload" href={manrope} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

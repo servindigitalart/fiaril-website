@@ -38,7 +38,8 @@ export function stage(canvas: HTMLCanvasElement, { setup, draw }: StageOptions):
   const start = () => { if (!raf && visible && !still && !paused && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
   const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
-  const local = (e: PointerEvent) => { const r = canvas.getBoundingClientRect(); pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; };
+  // offsetX/Y are relative to the canvas already: no layout read per pointer event
+  const local = (e: PointerEvent) => { pointer.x = e.offsetX; pointer.y = e.offsetY; };
   canvas.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { hover = true; local(e); } });
   canvas.addEventListener('pointerleave', () => { hover = false; });
   canvas.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { local(e); pulse = 1; pointer.taps++; start(); } });

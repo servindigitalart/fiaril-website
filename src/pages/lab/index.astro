@@ -2,11 +2,11 @@
 import Base from '../../layouts/Base.astro';
 import { experiments } from '../../lab/experiments';
 ---
-<Base title="Creative Lab — FIARIL Kinetic Raster System">
+<Base title="Creative Lab · FIARIL Orthopedics" description="Experimentos generativos de FIARIL: el laboratorio del lenguaje visual Raster Anatomy.">
   <section class="wrap intro">
-    <p class="label">Fase 2 · Creative Lab</p>
-    <h1>Kinetic Raster System</h1>
-    <p>Experimentos aislados para evaluar antes de integrarse en la homepage. Cada uno respeta <code>prefers-reduced-motion</code> (imagen estática), pausa su loop fuera de pantalla y ofrece interacción táctil.</p>
+    <h1>Creative Lab</h1>
+    <p>El laboratorio donde se desarrolla el lenguaje visual de FIARIL: imágenes construidas con puntos, campos que responden al movimiento y anatomía abstracta. F05 Precision Field es el motor del hero.</p>
+    <p class="note">Cada experimento muestra una imagen estática si el sistema pide reducir el movimiento y se detiene fuera de pantalla.</p>
   </section>
   <ol class="wrap grid">
     {experiments.map((e) => (
@@ -23,7 +23,12 @@ import { experiments } from '../../lab/experiments';
 
 <style>
   .intro { padding-block: var(--space-l); }
-  .grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); gap: 1px; background: var(--color-border); border: 1px solid var(--color-border); }
+  .intro h1 { font-size: var(--step-4); font-weight: var(--weight-display); letter-spacing: -0.035em; }
+  .intro p:not(.note) { font-size: var(--step-1); color: var(--color-text); max-width: 46ch; }
+  .intro .note { color: var(--color-text-muted); font-size: var(--step--1); }
+  /* borders per card (not a coloured gap), so an incomplete last row leaves plain surface, not a grey block */
+  .grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); border-top: 1px solid var(--color-border); border-left: 1px solid var(--color-border); }
+  .grid li { border-right: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
   .grid a { display: block; height: 100%; padding: var(--space-m); background: var(--color-surface); text-decoration: none; transition: background 0.3s var(--ease-out); }
   .grid a:hover { background: var(--color-surface-raised); }
   h2 { font-size: var(--step-2); margin-top: var(--space-l); }
